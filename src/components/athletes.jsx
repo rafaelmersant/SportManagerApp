@@ -69,7 +69,7 @@ class Athletes extends Component {
     let filtered = allAthletes;
     if (searchQuery)
       filtered = allAthletes.filter(m =>
-        `${m.first_name.toLowerCase()} ${m.last_name.toLowerCase()}`.startsWith(
+        `${m.first_name.toLowerCase()} ${m.last_name.toLowerCase()}`.includes(
           searchQuery.toLocaleLowerCase()
         )
       );
@@ -129,7 +129,9 @@ class Athletes extends Component {
                   onPageChange={this.handlePageChange}
                 />
                 <p className="text-muted ml-3 mt-2">
-                  <em>Mostrando {totalCount} atletas</em>
+                  <em>
+                    Mostrando {athletes.length} de {totalCount} atletas
+                  </em>
                 </p>
               </div>
             )}

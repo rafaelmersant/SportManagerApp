@@ -11,6 +11,7 @@ const SearchBox = ({ value, onChange, placeholder, label = "" }) => {
       value={value}
       label={label}
       onChange={e => onChange(e.currentTarget.value)}
+      autoComplete="off"
     />
   );
 };

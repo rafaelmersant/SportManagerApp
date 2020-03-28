@@ -53,7 +53,15 @@ class TableBody extends Component {
         {data.map(item => (
           <tr key={item.product_id || item.id}>
             {columns.map(column => (
-              <td key={this.createKey(item, column)} className={column.classes}>
+              <td
+                key={this.createKey(item, column)}
+                className={column.classes}
+                ref={el => {
+                  if (el) {
+                    el.style.setProperty("padding", "0.30rem", "important");
+                  }
+                }}
+              >
                 {this.renderCell(item, column)}
               </td>
             ))}

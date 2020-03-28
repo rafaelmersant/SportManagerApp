@@ -1,6 +1,10 @@
 import React from "react";
 import Joi from "joi-browser";
 import { toast } from "react-toastify";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import es from "date-fns/locale/es";
 import Form from "./common/form";
 import {
   getAthlete,
@@ -8,6 +12,8 @@ import {
   getAthleteByFirstLastName
 } from "../services/athleteService";
 import { getCurrentUser } from "../services/authService";
+
+registerLocale("es", es);
 
 class PersonalInfo extends Form {
   state = {
@@ -20,14 +26,17 @@ class PersonalInfo extends Form {
       phone_number: "",
       photo: "",
       birthday: new Date().toJSON().substr(0, 10),
-      enrollment_year: "",
-      enrollment_month: "",
+      enrollment_year: new Date().getFullYear(),
+      enrollment_month: new Date().getMonth() + 1,
       medical_information: "",
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString()
     },
     errors: {},
-    action: "Nuevo Atleta"
+    action: "Nuevo Atleta",
+    birthday: "",
+    enrollmentYears: [],
+    enrollmentMonths: []
   };
 
   schema = {
@@ -58,10 +67,12 @@ class PersonalInfo extends Form {
       if (athleteId === "new") return;
 
       const { data: athlete } = await getAthlete(athleteId);
+      const mappedAthlete = this.mapToViewModel(athlete);
 
       this.setState({
-        data: this.mapToViewModel(athlete),
-        action: "Editar Atleta"
+        data: mappedAthlete,
+        action: "Editar Atleta",
+        birthday: new Date(mappedAthlete.birthday)
       });
 
       this.props.onChangePhoto(athlete[0].photo);
@@ -71,7 +82,47 @@ class PersonalInfo extends Form {
     }
   }
 
+  populateEnrollmentYears() {
+    const initYear = 2000;
+    let currentYear = new Date().getFullYear();
+    let years = [];
+
+    while (currentYear >= initYear) {
+      years.push({ id: currentYear, name: currentYear });
+      currentYear -= 1;
+    }
+
+    this.setState({ enrollmentYears: years });
+  }
+
+  populateEnrollmentMonths() {
+    const enrollmentMonths = [];
+    const months = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ];
+
+    months.forEach((month, index) => {
+      enrollmentMonths.push({ id: index + 1, name: month });
+    });
+
+    this.setState({ enrollmentMonths });
+  }
+
   async componentDidMount() {
+    this.populateEnrollmentYears();
+    this.populateEnrollmentMonths();
+
     await this.populateAthlete();
 
     if (this.props.athleteName && this.props.athleteName.length) {
@@ -81,6 +132,12 @@ class PersonalInfo extends Form {
       this.forceUpdate();
     }
   }
+
+  handleChangeBirthday = date => {
+    const data = { ...this.state.data };
+    data.birthday = date.toJSON().substr(0, 10);
+    this.setState({ data, birthday: date });
+  };
 
   mapToViewModel(athlete) {
     return {
@@ -122,10 +179,15 @@ class PersonalInfo extends Form {
     const { data } = { ...this.state };
     data.first_name = data.first_name.toUpperCase();
     data.last_name = data.last_name.toUpperCase();
+    data.birthday = new Date(data.birthday).toJSON().substr(0, 10);
+    data.photo = sessionStorage["newPhoto"]
+      ? sessionStorage["newPhoto"]
+      : data.photo;
 
     const { data: athlete } = await saveAthlete(data);
     console.log(athlete);
 
+    sessionStorage["newPhoto"] = null;
     this.props.history.push("/athletes");
   };
 
@@ -139,32 +201,48 @@ class PersonalInfo extends Form {
         <div className="col-12 pb-3 mb-3 bg-light">
           <form onSubmit={this.handleSubmit}>
             <div className="row">
-              <div className="col d-md-block d-sm-none">
+              <div className="col-lg-6 col-md-6 col-sm-12">
                 {this.renderInput("first_name", "Nombre")}
               </div>
-              <div className="col">
+              <div className="col-lg-6 col-md-6 col-sm-12">
                 {this.renderInput("last_name", "Apellidos")}
               </div>
             </div>
             <div className="row">
-              <div className="col">{this.renderInput("email", "Email")}</div>
-              <div className="col">
+              <div className="col-lg-6 col-md-6 col-sm-12">
+                {this.renderInput("email", "Email")}
+              </div>
+              <div className="col-lg-6 col-md-6 col-sm-12">
                 {this.renderInput("phone_number", "Teléfono")}
               </div>
             </div>
             <div className="row">
-              <div className="col">
-                {this.renderInput("enrollment_year", "Año de Inscripción")}
+              <div className="col-lg-3 col-md-3 col-sm-12">
+                {this.renderSelect(
+                  "enrollment_year",
+                  "Año de Inscripción",
+                  this.state.enrollmentYears
+                )}
               </div>
-              <div className="col">
-                {this.renderInput("enrollment_month", "Mes de Inscripción")}
+              <div className="col-lg-3 col-md-3 col-sm-12">
+                {this.renderSelect(
+                  "enrollment_month",
+                  "Mes de Inscripción",
+                  this.state.enrollmentMonths
+                )}
+              </div>
+              <div className="col-6">
+                <label className="d-block">Fecha de Nacimiento</label>
+                <DatePicker
+                  selected={this.state.birthday}
+                  onChange={date => this.handleChangeBirthday(date)}
+                  dateFormat="dd/MM/yyyy"
+                />
               </div>
             </div>
 
-            {this.renderInput("birthday", "Fecha de Nacimiento")}
             {this.renderInput("address", "Dirección")}
             {this.renderInput("medical_information", "Información médica")}
-            {this.renderInput("photo", "Foto")}
 
             <div className="text-center">{this.renderButton("Guardar")}</div>
           </form>

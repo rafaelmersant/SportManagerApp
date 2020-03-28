@@ -14,6 +14,8 @@ class AthleteForm extends Component {
     const data = { ...this.state.data };
     data.photo = photo;
     this.setState({ data });
+
+    sessionStorage["newPhoto"] = this.state.data.photo;
   };
 
   render() {
@@ -21,7 +23,10 @@ class AthleteForm extends Component {
       <div className="container col-lg-8 col-md-12 col-sm-12 shadow mb-5 bg-white">
         <div className="text-center mb-2 pt-1">
           <div className="text-center">
-            <PhotoProfile photo={this.state.data.photo} />
+            <PhotoProfile
+              photo={this.state.data.photo}
+              onChangePhoto={this.handleChangePhoto}
+            />
           </div>
           <div className="mt-2">
             <TabsAthlete />

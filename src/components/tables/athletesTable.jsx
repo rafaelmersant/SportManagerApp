@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "../common/table";
+import { defaultPhoto } from "../../variables";
 import auth from "../../services/authService";
 
 class AthletesTable extends Component {
@@ -17,11 +18,7 @@ class AthletesTable extends Component {
                 width: "75px",
                 height: "75px",
                 backgroundImage:
-                  "url(" +
-                  (process.env.PUBLIC_URL + athlete.photo
-                    ? `/photos/${athlete.photo}`
-                    : "/photos/profile-default.png") +
-                  ")",
+                  "url(" + (athlete.photo ? athlete.photo : defaultPhoto) + ")",
                 backgroundSize: "cover"
               }}
             ></div>
@@ -47,7 +44,12 @@ class AthletesTable extends Component {
     },
     // { path: "email", label: "Email", classes: "align-middle" },
     // { path: "phone_number", label: "Teléfono", classes: "align-middle" },
-    { path: "age", label: "Edad", classes: "align-middle" },
+    {
+      path: "age",
+      label: "Edad",
+      classes: "align-middle",
+      content: athlete => <span>{athlete.age} años</span>
+    },
     { path: "creation_date", label: "Creado (m/d/a)", classes: "align-middle" }
   ];
 

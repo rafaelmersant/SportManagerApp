@@ -1,9 +1,17 @@
 import React, { Component } from "react";
+import { defaultPhoto } from "../../variables";
+import firebaseConfig from "../../firebaseConfig";
+import FileUploader from "react-firebase-file-uploader";
+import firebase from "firebase";
+
+firebase.initializeApp(firebaseConfig);
 
 class PhotoProfile extends Component {
   state = {
-    selectedPhoto: null,
-    photo: null
+    avatar: "",
+    photo: null,
+    progress: 0,
+    isUploading: false
   };
 
   handleChangePhoto = event => {
@@ -15,25 +23,34 @@ class PhotoProfile extends Component {
     });
   };
 
-  handleUpdatePhoto = () => {
-    const handler = e => {
-      e.preventDefault();
-    };
-    handler(window.event);
-    console.log(this.state.selectedPhoto);
+  handleUploadStart = () => this.setState({ isUploading: true });
 
-    // const fd = new FormData();
-    // fd.append("image", this.state.selectedPhoto, this.state.selectedPhoto.name);
-    // axios.post("/photos/", fd).then(res => {
-    //   console.log(res);
-    // });
+  handleProgress = progress => this.setState({ progress });
+
+  handleUploadError = error => {
+    this.setState({ isUploading: false });
+    console.error(error);
+  };
+
+  handleUploadSuccess = filename => {
+    this.setState({ avatar: filename, progress: 100, isUploading: false });
+
+    firebase
+      .storage()
+      .ref("photos")
+      .child(filename)
+      .getDownloadURL()
+      .then(url => {
+        this.setState({ photo: url });
+        this.props.onChangePhoto(url);
+      });
   };
 
   render() {
-    const _photo = this.props.photo ? this.props.photo : "profile-default.png";
-    const __photo = process.env.PUBLIC_URL + `/photos/${_photo}`;
-    let { photo } = { ...this.state };
-    photo = photo ? photo : __photo;
+    const _photo = this.props.photo ? this.props.photo : defaultPhoto;
+
+    let { photo, progress } = { ...this.state };
+    photo = photo ? photo : _photo;
 
     return (
       <React.Fragment>
@@ -49,21 +66,37 @@ class PhotoProfile extends Component {
           ></div>
         </div>
         <div className="text-center">
-          <input
-            style={{ display: "none" }}
-            type="file"
-            onChange={this.handleChangePhoto}
-            ref={fileInput => (this.fileInput = fileInput)}
-          />
-          <button onClick={this.handleUpdatePhoto}>Cargar photo</button>
+          {progress > 0 && progress !== 100 && (
+            <div className="progress">
+              <div
+                className="progress-bar"
+                role="progressbar"
+                style={{ width: `${progress}%` }}
+                aria-valuenow={progress}
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                {progress}%
+              </div>
+            </div>
+          )}
 
-          <a
-            href="javascript:void(0)"
-            className="text-small d-block mt-1"
-            onClick={() => this.fileInput.click()}
-          >
-            <h6>Cambiar foto</h6>
-          </a>
+          <label>
+            <FileUploader
+              hidden
+              accept="image/*"
+              name="avatar"
+              randomizeFilename
+              storageRef={firebase.storage().ref("photos")}
+              onUploadStart={this.handleUploadStart}
+              onUploadError={this.handleUploadError}
+              onUploadSuccess={this.handleUploadSuccess}
+              onProgress={this.handleProgress}
+            />
+            <h6 className="text-info" style={{ cursor: "pointer" }}>
+              Cargar foto
+            </h6>
+          </label>
         </div>
       </React.Fragment>
     );
