@@ -241,7 +241,7 @@ class PersonalInfo extends Form {
               </div>
             </div>
 
-            {this.renderInput("address", "Dirección")}
+            {this.renderInput("address", "Dirección", "text", "", "Opcional")}
             {this.renderInput("medical_information", "Información médica")}
 
             <div className="text-center">{this.renderButton("Guardar")}</div>

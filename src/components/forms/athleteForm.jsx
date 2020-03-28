@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TabsAthlete from "../common/tabsAthlete";
 import PhotoProfile from "../common/photoProfile";
 import PersonalInfo from "../personalInfo";
+import ParentInfo from "../parentInfo";
 
 class AthleteForm extends Component {
   state = {
@@ -20,7 +21,7 @@ class AthleteForm extends Component {
 
   render() {
     return (
-      <div className="container col-lg-8 col-md-12 col-sm-12 shadow mb-5 bg-white">
+      <div className="container col-lg-8 col-md-12 col-sm-12 shadow pb-5 bg-white">
         <div className="text-center mb-2 pt-1">
           <div className="text-center">
             <PhotoProfile
@@ -51,7 +52,7 @@ class AthleteForm extends Component {
             role="tabpanel"
             aria-labelledby="parent-tab"
           >
-            ...
+            <ParentInfo {...this.props} />
           </div>
           <div
             className="tab-pane fade"
