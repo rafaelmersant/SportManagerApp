@@ -7,7 +7,7 @@ const NavBar = ({ user }) => {
       <NavLink className="navbar-brand" to="/">
         <img
           width="60px"
-          src={process.env.PUBLIC_URL + "/images/fenix.jpg"}
+          src={process.env.PUBLIC_URL + "/images/fenix.png"}
           alt="FENIX"
         />
       </NavLink>

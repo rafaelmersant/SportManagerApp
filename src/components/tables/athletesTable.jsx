@@ -50,19 +50,24 @@ class AthletesTable extends Component {
       classes: "align-middle",
       content: athlete => <span>{athlete.age} años</span>
     },
-    { path: "creation_date", label: "Creado (m/d/a)", classes: "align-middle" }
+    {
+      path: "creation_date",
+      label: "Creado (m/d/a)",
+      align: "d-none d-md-table-cell d-lg-table-cell border-0",
+      classes: "align-middle d-none d-md-table-cell d-lg-table-cell border-0"
+    }
   ];
 
   deleteColumn = {
     key: "delete",
     classes: "align-middle",
     content: athlete => (
-      <div className="text-center">
-        <button
+      <div className="text-center pl-2 pr-2">
+        <span
           onClick={() => this.props.onDelete(athlete)}
           className="fa fa-trash"
-          style={{ color: "red", fontSize: "16px" }}
-        ></button>
+          style={{ color: "red", fontSize: "24px", cursor: "pointer" }}
+        ></span>
       </div>
     )
   };

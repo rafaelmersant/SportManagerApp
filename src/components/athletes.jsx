@@ -27,7 +27,7 @@ class Athletes extends Component {
 
   handleDelete = async athlete => {
     const answer = window.confirm(
-      "Esta seguro de eliminar este atleta? \nNo podrá deshacer esta acción"
+      `Esta seguro de eliminar al atleta ${athlete.first_name} ${athlete.last_name}? \nNo podrá deshacer esta acción`
     );
     if (answer) {
       const originalAthletes = this.state.athletes;

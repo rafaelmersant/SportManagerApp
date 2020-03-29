@@ -3,25 +3,32 @@ import TabsAthlete from "../common/tabsAthlete";
 import PhotoProfile from "../common/photoProfile";
 import PersonalInfo from "../personalInfo";
 import ParentInfo from "../parentInfo";
+import DocumentInfo from "../documentInfo";
 
 class AthleteForm extends Component {
   state = {
     data: {
-      photo: ""
+      photo: "",
+      filename: ""
     }
   };
 
   handleChangePhoto = photo => {
-    const data = { ...this.state.data };
-    data.photo = photo;
-    this.setState({ data });
+    if (photo.changed) {
+      sessionStorage["newPhoto"] = photo.url;
+      sessionStorage["newPhoto_filename"] = photo.filename;
+    }
 
-    sessionStorage["newPhoto"] = this.state.data.photo;
+    const data = { ...this.state.data };
+    data.photo = photo.url;
+    data.filename = photo.filename;
+
+    this.setState({ data });
   };
 
   render() {
     return (
-      <div className="container col-lg-8 col-md-12 col-sm-12 shadow pb-5 bg-white">
+      <div className="container col-lg-8 col-md-12 col-sm-12 shadow pb-1 bg-white">
         <div className="text-center mb-2 pt-1">
           <div className="text-center">
             <PhotoProfile
@@ -30,7 +37,7 @@ class AthleteForm extends Component {
             />
           </div>
           <div className="mt-2">
-            <TabsAthlete />
+            <TabsAthlete {...this.props} />
           </div>
         </div>
 
@@ -46,6 +53,7 @@ class AthleteForm extends Component {
               onChangePhoto={this.handleChangePhoto}
             />
           </div>
+
           <div
             className="tab-pane fade"
             id="parent"
@@ -54,13 +62,14 @@ class AthleteForm extends Component {
           >
             <ParentInfo {...this.props} />
           </div>
+
           <div
             className="tab-pane fade"
             id="document"
             role="tabpanel"
             aria-labelledby="document-tab"
           >
-            ...
+            <DocumentInfo {...this.props} />
           </div>
         </div>
       </div>

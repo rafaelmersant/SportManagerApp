@@ -1,6 +1,6 @@
 import React from "react";
 
-const TabsAthlete = () => {
+const TabsAthlete = props => {
   return (
     <ul className="nav nav-tabs" id="myTab" role="tablist">
       <li className="nav-item">
@@ -16,32 +16,36 @@ const TabsAthlete = () => {
           Perfil
         </a>
       </li>
-      <li className="nav-item">
-        <a
-          className="nav-link"
-          id="parent-tab"
-          data-toggle="tab"
-          href="#parent"
-          role="tab"
-          aria-controls="parent"
-          aria-selected="false"
-        >
-          Relacionados
-        </a>
-      </li>
-      <li className="nav-item">
-        <a
-          className="nav-link"
-          id="document-tab"
-          data-toggle="tab"
-          href="#document"
-          role="tab"
-          aria-controls="document"
-          aria-selected="false"
-        >
-          Documentos
-        </a>
-      </li>
+      {props.match.params.id !== "new" && (
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            id="parent-tab"
+            data-toggle="tab"
+            href="#parent"
+            role="tab"
+            aria-controls="parent"
+            aria-selected="false"
+          >
+            Relacionados
+          </a>
+        </li>
+      )}
+      {props.match.params.id !== "new" && (
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            id="document-tab"
+            data-toggle="tab"
+            href="#document"
+            role="tab"
+            aria-controls="document"
+            aria-selected="false"
+          >
+            Documentos
+          </a>
+        </li>
+      )}
     </ul>
   );
 };

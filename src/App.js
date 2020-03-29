@@ -15,6 +15,10 @@ import auth from "./services/authService";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Home from "./components/home";
+import firebaseConfig from "./firebaseConfig";
+import firebase from "firebase/app";
+
+firebase.initializeApp(firebaseConfig);
 
 class App extends Component {
   state = {

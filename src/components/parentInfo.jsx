@@ -143,6 +143,8 @@ class ParentInfo extends Form {
   };
 
   render() {
+    const { parents } = { ...this.state };
+
     return (
       <React.Fragment>
         <div>
@@ -172,10 +174,10 @@ class ParentInfo extends Form {
         <div>
           <div className="row">
             <div className="col">
-              {!this.state.loading && this.state.parents.length > 0 && (
-                <div style={{ minHeight: "280px" }}>
+              {parents.length > 0 && (
+                <div style={{ minHeight: "330px" }}>
                   <ParentsTable
-                    parents={this.state.parents}
+                    parents={parents}
                     sortColumn={{ path: "name", order: "asc" }}
                     onDelete={this.handleDeleteParent}
                     onEdit={this.handleEditParent}
@@ -184,10 +186,10 @@ class ParentInfo extends Form {
                 </div>
               )}
 
-              {!this.state.parents.length > 0 && (
+              {!parents.length > 0 && (
                 <div
                   className="text-center mt-3"
-                  style={{ paddingBottom: "7rem" }}
+                  style={{ paddingBottom: "8rem" }}
                 >
                   <span
                     className="fa fa-users text-muted"

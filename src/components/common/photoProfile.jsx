@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import { defaultPhoto } from "../../variables";
-import firebaseConfig from "../../firebaseConfig";
 import FileUploader from "react-firebase-file-uploader";
-import firebase from "firebase";
-
-firebase.initializeApp(firebaseConfig);
+import firebase from "firebase/app";
+import "firebase/storage";
 
 class PhotoProfile extends Component {
   state = {
     avatar: "",
-    photo: null,
+    photo: "",
     progress: 0,
     isUploading: false
   };
@@ -42,19 +40,20 @@ class PhotoProfile extends Component {
       .getDownloadURL()
       .then(url => {
         this.setState({ photo: url });
-        this.props.onChangePhoto(url);
+        this.props.onChangePhoto({ url, filename, changed: true });
       });
   };
 
   render() {
     const _photo = this.props.photo ? this.props.photo : defaultPhoto;
 
-    let { photo, progress } = { ...this.state };
+    let { photo, progress, isUploading } = { ...this.state };
     photo = photo ? photo : _photo;
 
     return (
       <React.Fragment>
         <div className="text-center">
+          <div id="container"></div>
           <div
             className="border shadow rounded-circle d-inline-block"
             style={{
@@ -62,11 +61,12 @@ class PhotoProfile extends Component {
               height: "170px",
               backgroundImage: "url(" + photo + ")",
               backgroundSize: "cover"
+              // transform: "rotate(90deg)"
             }}
           ></div>
         </div>
         <div className="text-center">
-          {progress > 0 && progress !== 100 && (
+          {isUploading && (
             <div className="progress">
               <div
                 className="progress-bar"
@@ -92,6 +92,7 @@ class PhotoProfile extends Component {
               onUploadError={this.handleUploadError}
               onUploadSuccess={this.handleUploadSuccess}
               onProgress={this.handleProgress}
+              // metadata={{ cacheControl: "max-age=3600" }}
             />
             <h6 className="text-info" style={{ cursor: "pointer" }}>
               Cargar foto

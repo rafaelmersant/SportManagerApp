@@ -12,6 +12,8 @@ import {
   getAthleteByFirstLastName
 } from "../services/athleteService";
 import { getCurrentUser } from "../services/authService";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 registerLocale("es", es);
 
@@ -25,7 +27,8 @@ class PersonalInfo extends Form {
       address: "",
       phone_number: "",
       photo: "",
-      birthday: new Date().toJSON().substr(0, 10),
+      photo_filename: "",
+      birthday: "", //new Date().toJSON().substr(0, 10),
       enrollment_year: new Date().getFullYear(),
       enrollment_month: new Date().getMonth() + 1,
       medical_information: "",
@@ -53,7 +56,8 @@ class PersonalInfo extends Form {
     address: Joi.optional(),
     phone_number: Joi.optional(),
     photo: Joi.optional(),
-    birthday: Joi.optional(),
+    photo_filename: Joi.optional(),
+    birthday: Joi.string(),
     enrollment_year: Joi.optional(),
     enrollment_month: Joi.optional(),
     medical_information: Joi.optional(),
@@ -75,7 +79,10 @@ class PersonalInfo extends Form {
         birthday: new Date(mappedAthlete.birthday)
       });
 
-      this.props.onChangePhoto(athlete[0].photo);
+      this.props.onChangePhoto({
+        url: athlete[0].photo,
+        filename: athlete[0].photo_filename
+      });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
         return this.props.history.replace("/not-found");
@@ -148,6 +155,9 @@ class PersonalInfo extends Form {
       address: athlete[0].address ? athlete[0].address : "",
       phone_number: athlete[0].phone_number ? athlete[0].phone_number : "",
       photo: athlete[0].photo ? athlete[0].photo : "",
+      photo_filename: athlete[0].photo_filename
+        ? athlete[0].photo_filename
+        : "",
       birthday: athlete[0].birthday ? athlete[0].birthday : "",
       enrollment_year: athlete[0].enrollment_year
         ? athlete[0].enrollment_year
@@ -179,16 +189,41 @@ class PersonalInfo extends Form {
     const { data } = { ...this.state };
     data.first_name = data.first_name.toUpperCase();
     data.last_name = data.last_name.toUpperCase();
-    data.birthday = new Date(data.birthday).toJSON().substr(0, 10);
-    data.photo = sessionStorage["newPhoto"]
-      ? sessionStorage["newPhoto"]
-      : data.photo;
+    data.birthday = data.birthday
+      ? new Date(data.birthday).toJSON().substr(0, 10)
+      : "";
+
+    data.photo = data.id === 0 ? "" : data.photo;
+
+    if (sessionStorage["newPhoto"]) {
+      var { photo_filename: old_photo } = { ...this.state.data };
+
+      data.photo = sessionStorage["newPhoto"];
+      data.photo_filename = sessionStorage["newPhoto_filename"];
+    }
 
     const { data: athlete } = await saveAthlete(data);
     console.log(athlete);
 
-    sessionStorage["newPhoto"] = null;
-    this.props.history.push("/athletes");
+    //Remove old photo from firebase
+    if (old_photo)
+      firebase
+        .storage()
+        .ref("photos")
+        .child(old_photo)
+        .delete()
+        .then(() => {
+          console.log(`file ${old_photo} deleted`);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+    sessionStorage["newPhoto"] = "";
+    sessionStorage["newPhoto_filename"] = "";
+
+    window.location = `/athlete/${athlete.id}`;
+    //this.props.history.push(`/athlete/${athlete.id}`);
   };
 
   render() {
@@ -198,7 +233,7 @@ class PersonalInfo extends Form {
           {this.state.action}
         </h4>
 
-        <div className="col-12 pb-3 mb-3 bg-light">
+        <div className="col-12 pb-5 bg-light">
           <form onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-lg-6 col-md-6 col-sm-12">
@@ -244,7 +279,9 @@ class PersonalInfo extends Form {
             {this.renderInput("address", "Dirección", "text", "", "Opcional")}
             {this.renderInput("medical_information", "Información médica")}
 
-            <div className="text-center">{this.renderButton("Guardar")}</div>
+            <div className="text-center mt-2">
+              {this.renderButton("Guardar")}
+            </div>
           </form>
         </div>
       </React.Fragment>

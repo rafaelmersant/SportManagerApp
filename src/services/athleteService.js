@@ -60,7 +60,6 @@ export function getParents(athleteId) {
 }
 
 export function getParent(parentId) {
-  console.log(`${apiEndpointParent}/?id=${parentId}`);
   return http.get(`${apiEndpointParent}/?id=${parentId}`);
 }
 
@@ -81,7 +80,7 @@ export function deleteParent(parentId) {
 //Documents
 //************************************************************//
 export function getDocuments(athleteId) {
-  return http.get(`${apiEndpointDocument}/?athlete=${athleteId}`);
+  return http.get(`${apiEndpointDocument}/?athlete_id=${athleteId}`);
 }
 
 export function getDocument(documentId) {
