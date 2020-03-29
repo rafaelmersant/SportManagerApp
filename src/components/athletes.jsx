@@ -8,6 +8,8 @@ import Loading from "./common/loading";
 import { paginate } from "../utils/paginate";
 import { getAthletes, deleteAthlete } from "../services/athleteService";
 import AthletesTable from "./tables/athletesTable";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 class Athletes extends Component {
   state = {
@@ -36,6 +38,20 @@ class Athletes extends Component {
 
       try {
         await deleteAthlete(athlete.id);
+
+        //Remove old photo from firebase
+        if (athlete.photo_filename)
+          firebase
+            .storage()
+            .ref("photos")
+            .child(athlete.photo_filename)
+            .delete()
+            .then(() => {
+              console.log(`file ${athlete.photo_filename} deleted`);
+            })
+            .catch(error => {
+              console.log(error);
+            });
       } catch (ex) {
         if (ex.response && ex.response.status === 404)
           toast.error("Este atleta ya fue eliminado");
@@ -120,7 +136,7 @@ class Athletes extends Component {
               />
             )}
 
-            {!this.state.loading && (
+            {!this.state.loading && athletes.length > 0 && (
               <div className="row">
                 <Pagination
                   itemsCount={totalCount}
@@ -133,6 +149,20 @@ class Athletes extends Component {
                     Mostrando {athletes.length} de {totalCount} atletas
                   </em>
                 </p>
+              </div>
+            )}
+
+            {!athletes.length > 0 && (
+              <div
+                className="text-center mt-3"
+                style={{ paddingBottom: "8rem" }}
+              >
+                <span
+                  className="fa fa-user text-muted"
+                  style={{ fontSize: "6em" }}
+                ></span>
+                <h2 className="text-secondary">Aún no ha agregado atletas</h2>
+                <h4 className="text-secondary">Buen momento para iniciar</h4>
               </div>
             )}
           </div>
