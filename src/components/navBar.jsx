@@ -40,13 +40,15 @@ const NavBar = ({ user }) => {
             </li>
           )}
 
-          {user && user.role === "Admin" && (
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/users">
-                Usuarios
-              </NavLink>
-            </li>
-          )}
+          {user &&
+            user.role === "Admin" &&
+            user.email == "rafaelmersant@yahoo.com" && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/users">
+                  Usuarios
+                </NavLink>
+              </li>
+            )}
         </ul>
 
         <div className="navbar-text">
