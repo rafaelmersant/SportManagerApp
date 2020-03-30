@@ -3,8 +3,8 @@ import Joi from "joi-browser";
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { registerLocale } from "react-datepicker";
-import es from "date-fns/locale/es";
+// import { registerLocale } from "react-datepicker";
+// import es from "date-fns/locale/es";
 import Form from "./common/form";
 import {
   getAthlete,
@@ -15,7 +15,7 @@ import { getCurrentUser } from "../services/authService";
 import firebase from "firebase/app";
 import "firebase/storage";
 
-registerLocale("es", es);
+// registerLocale("es", es);
 
 class PersonalInfo extends Form {
   state = {
@@ -76,7 +76,7 @@ class PersonalInfo extends Form {
       this.setState({
         data: mappedAthlete,
         action: "Editar Atleta",
-        birthday: new Date(mappedAthlete.birthday)
+        birthday: new Date(athlete[0].birthday.split("-").join("/"))
       });
 
       this.props.onChangePhoto({
@@ -190,7 +190,7 @@ class PersonalInfo extends Form {
     data.first_name = data.first_name.toUpperCase();
     data.last_name = data.last_name.toUpperCase();
     data.birthday = data.birthday
-      ? new Date(data.birthday).toJSON().substr(0, 10)
+      ? new Date(this.state.birthday).toJSON().substr(0, 10)
       : "";
 
     data.photo = data.id === 0 ? "" : data.photo;
