@@ -31,7 +31,7 @@
     "serve": "^11.2.0"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "start2": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
