@@ -42,7 +42,7 @@ const NavBar = ({ user }) => {
 
           {user &&
             user.role === "Admin" &&
-            user.email == "rafaelmersant@yahoo.com" && (
+            user.email === "rafaelmersant@yahoo.com" && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/users">
                   Usuarios
