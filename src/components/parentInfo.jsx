@@ -6,7 +6,7 @@ import {
   getParent,
   getParents,
   saveParent,
-  deleteParent
+  deleteParent,
 } from "../services/athleteService";
 import { getCurrentUser } from "../services/authService";
 import ParentsTable from "./tables/parentsTable";
@@ -20,23 +20,20 @@ class ParentInfo extends Form {
       phone_number: "",
       email: "",
       created_user: getCurrentUser().email,
-      creation_date: new Date().toISOString()
+      creation_date: new Date().toISOString(),
     },
     parents: [],
-    errors: {}
+    errors: {},
   };
 
   schema = {
     id: Joi.number(),
     athlete_id: Joi.number(),
-    name: Joi.string()
-      .required()
-      .max(150)
-      .label("Nombre"),
+    name: Joi.string().required().max(150).label("Nombre"),
     phone_number: Joi.optional(),
     email: Joi.optional(),
     created_user: Joi.string(),
-    creation_date: Joi.string()
+    creation_date: Joi.string(),
   };
 
   async populateParents() {
@@ -46,7 +43,7 @@ class ParentInfo extends Form {
 
       const { data: parents } = await getParents(athleteId);
       this.setState({
-        parents
+        parents,
       });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
@@ -68,7 +65,7 @@ class ParentInfo extends Form {
       created_user: parent[0].created_user
         ? parent[0].created_user
         : getCurrentUser().email,
-      creation_date: parent[0].creation_date
+      creation_date: parent[0].creation_date,
     };
   }
 
@@ -76,7 +73,7 @@ class ParentInfo extends Form {
     console.log("sorted");
   };
 
-  handleDeleteParent = async parent => {
+  handleDeleteParent = async (parent) => {
     const answer = window.confirm(
       `Seguro que desea eliminar a: ${parent.name}`
     );
@@ -96,8 +93,8 @@ class ParentInfo extends Form {
     }
   };
 
-  handleEditParent = async parent => {
-    const handler = e => {
+  handleEditParent = async (parent) => {
+    const handler = (e) => {
       e.preventDefault();
     };
     handler(window.event);
@@ -112,7 +109,7 @@ class ParentInfo extends Form {
         phone_number: item[0].phone_number,
         email: item[0].email,
         created_user: getCurrentUser().email,
-        creation_date: new Date().toISOString()
+        creation_date: new Date().toISOString(),
       };
 
       this.setState({ data });
@@ -121,7 +118,6 @@ class ParentInfo extends Form {
 
   doSubmit = async () => {
     const { data } = { ...this.state };
-    data.name = data.name.toUpperCase();
 
     try {
       const { data: parent } = await saveParent(data);

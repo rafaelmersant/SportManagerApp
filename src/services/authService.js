@@ -6,7 +6,7 @@ const token = {
   userId: "ms_userId",
   email: "ms_email",
   name: "ms_name",
-  role: "ms_role"
+  role: "ms_role",
 };
 
 //http.setJwt(getJwt());
@@ -14,28 +14,28 @@ const token = {
 export async function login(credentials) {
   const { data: jwt } = await http.post(`${apiEndpoint}/login/`, credentials);
 
-  localStorage.setItem(token.userId, jwt.id);
-  localStorage.setItem(token.email, jwt.email);
-  localStorage.setItem(token.name, jwt.name);
-  localStorage.setItem(token.role, jwt.role);
+  sessionStorage.setItem(token.userId, jwt.id);
+  sessionStorage.setItem(token.email, jwt.email);
+  sessionStorage.setItem(token.name, jwt.name);
+  sessionStorage.setItem(token.role, jwt.role);
 }
 
 export function logout() {
-  localStorage.removeItem(token.userId);
-  localStorage.removeItem(token.email);
-  localStorage.removeItem(token.name);
-  localStorage.removeItem(token.role);
+  sessionStorage.removeItem(token.userId);
+  sessionStorage.removeItem(token.email);
+  sessionStorage.removeItem(token.name);
+  sessionStorage.removeItem(token.role);
 }
 
 export function getCurrentUser() {
   try {
-    if (!localStorage.getItem(token.email)) return null;
+    if (!sessionStorage.getItem(token.email)) return null;
 
     return {
-      id: parseInt(localStorage.getItem(token.userId)),
-      name: localStorage.getItem(token.name),
-      email: localStorage.getItem(token.email),
-      role: localStorage.getItem(token.role)
+      id: parseInt(sessionStorage.getItem(token.userId)),
+      name: sessionStorage.getItem(token.name),
+      email: sessionStorage.getItem(token.email),
+      role: sessionStorage.getItem(token.role),
     };
 
     //jwtDecode(jwt);
@@ -55,5 +55,5 @@ export function getCurrentUser() {
 export default {
   login,
   logout,
-  getCurrentUser
+  getCurrentUser,
 };

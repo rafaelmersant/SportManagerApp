@@ -9,7 +9,7 @@ import Form from "./common/form";
 import {
   getAthlete,
   saveAthlete,
-  getAthleteByFirstLastName
+  getAthleteByFirstLastName,
 } from "../services/athleteService";
 import { getCurrentUser } from "../services/authService";
 import firebase from "firebase/app";
@@ -33,25 +33,19 @@ class PersonalInfo extends Form {
       enrollment_month: new Date().getMonth() + 1,
       medical_information: "",
       created_user: getCurrentUser().email,
-      creation_date: new Date().toISOString()
+      creation_date: new Date().toISOString(),
     },
     errors: {},
     action: "Nuevo Atleta",
     birthday: "",
     enrollmentYears: [],
-    enrollmentMonths: []
+    enrollmentMonths: [],
   };
 
   schema = {
     id: Joi.number(),
-    first_name: Joi.string()
-      .required()
-      .max(100)
-      .label("Nombre"),
-    last_name: Joi.string()
-      .required()
-      .max(100)
-      .label("Apellidos"),
+    first_name: Joi.string().required().max(100).label("Nombre"),
+    last_name: Joi.string().required().max(100).label("Apellidos"),
     email: Joi.optional(),
     address: Joi.optional(),
     phone_number: Joi.optional(),
@@ -62,7 +56,7 @@ class PersonalInfo extends Form {
     enrollment_month: Joi.optional(),
     medical_information: Joi.optional(),
     created_user: Joi.string(),
-    creation_date: Joi.string()
+    creation_date: Joi.string(),
   };
 
   async populateAthlete() {
@@ -76,12 +70,12 @@ class PersonalInfo extends Form {
       this.setState({
         data: mappedAthlete,
         action: "Editar Atleta",
-        birthday: new Date(athlete[0].birthday.split("-").join("/"))
+        birthday: new Date(athlete[0].birthday.split("-").join("/")),
       });
 
       this.props.onChangePhoto({
         url: athlete[0].photo,
-        filename: athlete[0].photo_filename
+        filename: athlete[0].photo_filename,
       });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
@@ -116,7 +110,7 @@ class PersonalInfo extends Form {
       "Septiembre",
       "Octubre",
       "Noviembre",
-      "Diciembre"
+      "Diciembre",
     ];
 
     months.forEach((month, index) => {
@@ -140,7 +134,7 @@ class PersonalInfo extends Form {
     }
   }
 
-  handleChangeBirthday = date => {
+  handleChangeBirthday = (date) => {
     const data = { ...this.state.data };
     data.birthday = date.toJSON().substr(0, 10);
     this.setState({ data, birthday: date });
@@ -171,14 +165,14 @@ class PersonalInfo extends Form {
       created_user: athlete[0].created_user
         ? athlete[0].created_user
         : getCurrentUser().email,
-      creation_date: athlete[0].creation_date
+      creation_date: athlete[0].creation_date,
     };
   }
 
   doSubmit = async () => {
     const { data: _athlete } = await getAthleteByFirstLastName(
-      this.state.data.first_name.toUpperCase(),
-      this.state.data.last_name.toUpperCase()
+      this.state.data.first_name,
+      this.state.data.last_name
     );
 
     if (_athlete.length > 0 && this.state.data.id === 0) {
@@ -187,8 +181,6 @@ class PersonalInfo extends Form {
     }
 
     const { data } = { ...this.state };
-    data.first_name = data.first_name.toUpperCase();
-    data.last_name = data.last_name.toUpperCase();
     data.birthday = data.birthday
       ? new Date(this.state.birthday).toJSON().substr(0, 10)
       : "";
@@ -215,7 +207,7 @@ class PersonalInfo extends Form {
         .then(() => {
           console.log(`file ${old_photo} deleted`);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
 
@@ -270,7 +262,7 @@ class PersonalInfo extends Form {
                 <label className="d-block">Fecha de Nacimiento</label>
                 <DatePicker
                   selected={this.state.birthday}
-                  onChange={date => this.handleChangeBirthday(date)}
+                  onChange={(date) => this.handleChangeBirthday(date)}
                   dateFormat="dd/MM/yyyy"
                 />
               </div>

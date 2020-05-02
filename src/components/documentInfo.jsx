@@ -7,7 +7,7 @@ import {
   getDocument,
   getDocuments,
   saveDocument,
-  deleteDocument
+  deleteDocument,
 } from "../services/athleteService";
 import { getCurrentUser } from "../services/authService";
 import DocumentsTable from "./tables/documentsTable";
@@ -23,26 +23,23 @@ class DocumentInfo extends Form {
       document_url: "",
       document_filename: "",
       created_user: getCurrentUser().email,
-      creation_date: new Date().toISOString()
+      creation_date: new Date().toISOString(),
     },
     documents: [],
     errors: {},
     documentName: "",
     progress: 0,
-    isUploading: false
+    isUploading: false,
   };
 
   schema = {
     id: Joi.number(),
     athlete_id: Joi.number(),
-    title: Joi.string()
-      .required()
-      .max(150)
-      .label("Titulo"),
+    title: Joi.string().required().max(150).label("Titulo"),
     document_url: Joi.string(),
     document_filename: Joi.string(),
     created_user: Joi.string(),
-    creation_date: Joi.string()
+    creation_date: Joi.string(),
   };
 
   async populateDocuments() {
@@ -52,7 +49,7 @@ class DocumentInfo extends Form {
 
       const { data: documents } = await getDocuments(athleteId);
       this.setState({
-        documents
+        documents,
       });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
@@ -73,7 +70,7 @@ class DocumentInfo extends Form {
       created_user: document[0].created_user
         ? document[0].created_user
         : getCurrentUser().email,
-      creation_date: document[0].creation_date
+      creation_date: document[0].creation_date,
     };
   }
 
@@ -81,7 +78,7 @@ class DocumentInfo extends Form {
     console.log("sorted");
   };
 
-  handleDeleteDocument = async document => {
+  handleDeleteDocument = async (document) => {
     const answer = window.confirm(
       `Seguro que desea eliminar: ${document.title}`
     );
@@ -98,7 +95,7 @@ class DocumentInfo extends Form {
           .then(() => {
             console.log(`file ${document.document_filename} deleted`);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       } catch (ex) {
@@ -113,8 +110,8 @@ class DocumentInfo extends Form {
     }
   };
 
-  handleEditDocument = async document => {
-    const handler = e => {
+  handleEditDocument = async (document) => {
+    const handler = (e) => {
       e.preventDefault();
     };
     handler(window.event);
@@ -128,7 +125,7 @@ class DocumentInfo extends Form {
         title: item[0].title,
         document_url: item[0].document_url,
         created_user: getCurrentUser().email,
-        creation_date: new Date().toISOString()
+        creation_date: new Date().toISOString(),
       };
 
       this.setState({ data });
@@ -137,19 +134,19 @@ class DocumentInfo extends Form {
 
   handleUploadStart = () => this.setState({ isUploading: true });
 
-  handleProgress = progress => this.setState({ progress });
+  handleProgress = (progress) => this.setState({ progress });
 
-  handleUploadError = error => {
+  handleUploadError = (error) => {
     this.setState({ isUploading: false });
     toast.error(`Hubo un error al tratar de cargar el documento \n ${error}`);
     console.error(error);
   };
 
-  handleUploadSuccess = filename => {
+  handleUploadSuccess = (filename) => {
     this.setState({
       documentName: filename,
       progress: 100,
-      isUploading: false
+      isUploading: false,
     });
 
     const { data } = { ...this.state };
@@ -159,7 +156,7 @@ class DocumentInfo extends Form {
       .ref("documents")
       .child(filename)
       .getDownloadURL()
-      .then(url => {
+      .then((url) => {
         data.document_url = url;
         data.document_filename = filename;
 
@@ -169,7 +166,6 @@ class DocumentInfo extends Form {
 
   doSubmit = async () => {
     const { data } = { ...this.state };
-    data.title = data.title.toUpperCase();
 
     try {
       const { data: document } = await saveDocument(data);
@@ -191,7 +187,7 @@ class DocumentInfo extends Form {
 
   render() {
     const { isUploading, progress, documents } = {
-      ...this.state
+      ...this.state,
     };
 
     return (
