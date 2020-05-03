@@ -194,8 +194,10 @@ class PersonalInfo extends Form {
       data.photo_filename = sessionStorage["newPhoto_filename"];
     }
 
+    console.log("Athlete: Before:", data);
+
     const { data: athlete } = await saveAthlete(data);
-    console.log(athlete);
+    console.log("Athlete: After:", athlete);
 
     //Remove old photo from firebase
     if (old_photo)
@@ -214,7 +216,7 @@ class PersonalInfo extends Form {
     sessionStorage["newPhoto"] = "";
     sessionStorage["newPhoto_filename"] = "";
 
-    window.location = `/athlete/${athlete.id}`;
+    //window.location = `/athlete/${athlete.id}`;
     //this.props.history.push(`/athlete/${athlete.id}`);
   };
 
