@@ -126,12 +126,12 @@ class PersonalInfo extends Form {
 
     await this.populateAthlete();
 
-    if (this.props.athleteName && this.props.athleteName.length) {
-      const data = { ...this.state.data };
-      data.first_name = this.props.athleteName;
-      this.setState({ data });
-      this.forceUpdate();
-    }
+    // if (this.props.athleteName && this.props.athleteName.length) {
+    //   const data = { ...this.state.data };
+    //   data.first_name = this.props.athleteName;
+    //   this.setState({ data });
+    //   this.forceUpdate();
+    // }
   }
 
   handleChangeBirthday = (date) => {
