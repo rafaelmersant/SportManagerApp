@@ -1,10 +1,7 @@
 import React from "react";
 import Joi from "joi-browser";
 import { toast } from "react-toastify";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-// import { registerLocale } from "react-datepicker";
-// import es from "date-fns/locale/es";
 import Form from "./common/form";
 import {
   getAthlete,
@@ -14,8 +11,7 @@ import {
 import { getCurrentUser } from "../services/authService";
 import firebase from "firebase/app";
 import "firebase/storage";
-
-// registerLocale("es", es);
+import Select from "./common/select";
 
 class PersonalInfo extends Form {
   state = {
@@ -29,17 +25,34 @@ class PersonalInfo extends Form {
       photo: "",
       photo_filename: "",
       birthday: "", //new Date().toJSON().substr(0, 10),
-      enrollment_year: new Date().getFullYear(),
-      enrollment_month: new Date().getMonth() + 1,
+      enrollment_year: "0", //new Date().getFullYear(),
+      enrollment_month: "0", //new Date().getMonth() + 1,
       medical_information: "",
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
     },
     errors: {},
     action: "Nuevo Atleta",
-    birthday: "",
+    birthdateDays: [],
+    birthdateMonths: [],
+    birthdateYears: [],
     enrollmentYears: [],
     enrollmentMonths: [],
+    birthdateData: { day: "0", month: "0", year: "0" },
+    months: [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ],
   };
 
   schema = {
@@ -51,7 +64,7 @@ class PersonalInfo extends Form {
     phone_number: Joi.optional(),
     photo: Joi.optional(),
     photo_filename: Joi.optional(),
-    birthday: Joi.string(),
+    birthday: Joi.optional(),
     enrollment_year: Joi.optional(),
     enrollment_month: Joi.optional(),
     medical_information: Joi.optional(),
@@ -67,10 +80,11 @@ class PersonalInfo extends Form {
       const { data: athlete } = await getAthlete(athleteId);
       const mappedAthlete = this.mapToViewModel(athlete);
 
+      if (athlete[0].birthday) this.mapToBirthdate(mappedAthlete.birthday);
+
       this.setState({
         data: mappedAthlete,
         action: "Editar Atleta",
-        birthday: new Date(athlete[0].birthday.split("-").join("/")),
       });
 
       this.props.onChangePhoto({
@@ -88,6 +102,8 @@ class PersonalInfo extends Form {
     let currentYear = new Date().getFullYear();
     let years = [];
 
+    years.push({ id: "0", name: "Seleccionar..." });
+
     while (currentYear >= initYear) {
       years.push({ id: currentYear, name: currentYear });
       currentYear -= 1;
@@ -98,31 +114,101 @@ class PersonalInfo extends Form {
 
   populateEnrollmentMonths() {
     const enrollmentMonths = [];
-    const months = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ];
 
-    months.forEach((month, index) => {
+    enrollmentMonths.push({ id: "0", name: "Seleccionar..." });
+
+    this.state.months.forEach((month, index) => {
       enrollmentMonths.push({ id: index + 1, name: month });
     });
 
     this.setState({ enrollmentMonths });
   }
 
+  populateBirthdateDays() {
+    let days = [];
+    days.push({ id: 0, name: "Día" });
+
+    for (let i = 1; i <= 31; i++) {
+      const _day = i.toString().padStart(2, "0");
+      days.push({ id: _day, name: _day });
+    }
+
+    this.setState({ birthdateDays: days });
+  }
+
+  populateBirthdateMonths() {
+    let months = [];
+    months.push({ id: 0, name: "Mes" });
+
+    for (let i = 1; i <= 12; i++) {
+      const _month = i.toString().padStart(2, "0");
+      months.push({ id: _month, name: this.state.months[i - 1] });
+    }
+    this.setState({ birthdateMonths: months });
+  }
+
+  populateBirthdateYears() {
+    let years = [];
+    years.push({ id: 0, name: "Año" });
+
+    let startYear = new Date().getFullYear() - 5;
+    let endYear = new Date().getFullYear() - 40;
+
+    for (let i = startYear; i >= endYear; i--) {
+      years.push({ id: i, name: i });
+    }
+    this.setState({ birthdateYears: years });
+  }
+
+  validateBirthdate = async () => {
+    const { birthdateData, data } = { ...this.state };
+    let birthdate = this.state.data.birthday;
+    console.log("birthdate", birthdate);
+    console.log("birthdateData", birthdateData);
+    if (
+      birthdateData.day !== "0" &&
+      birthdateData.month !== "0" &&
+      birthdateData.year !== "0"
+    ) {
+      console.log("birthdateData", birthdateData);
+
+      birthdate = [
+        birthdateData.year,
+        birthdateData.month,
+        birthdateData.day,
+      ].join("-");
+    }
+
+    if (birthdate) {
+      const date = new Date(birthdate);
+
+      if (date instanceof Date && isFinite(date)) {
+        data.birthday = birthdate;
+        console.log("data", data);
+        this.setState({ data });
+
+        return true;
+      }
+    }
+
+    if (
+      !birthdate &&
+      birthdateData.year === "0" &&
+      birthdateData.month === "0" &&
+      birthdateData.day === "0"
+    )
+      return true;
+
+    return false;
+  };
+
   async componentDidMount() {
     this.populateEnrollmentYears();
     this.populateEnrollmentMonths();
+
+    this.populateBirthdateDays();
+    this.populateBirthdateMonths();
+    this.populateBirthdateYears();
 
     await this.populateAthlete();
 
@@ -134,11 +220,25 @@ class PersonalInfo extends Form {
     // }
   }
 
-  handleChangeBirthday = (date) => {
-    const data = { ...this.state.data };
-    data.birthday = date.toJSON().substr(0, 10);
-    this.setState({ data, birthday: date });
-  };
+  // handleChangeBirthday = (date) => {
+  //   const data = { ...this.state.data };
+  //   data.birthday = date.toJSON().substr(0, 10);
+  //   this.setState({ data, birthday: date });
+  // };
+
+  mapToBirthdate(birthdate) {
+    const date = new Date(birthdate);
+
+    if (date instanceof Date && isFinite(date)) {
+      const d = date.toJSON().substr(0, 10);
+
+      const day = d.substr(8, 2);
+      const month = d.substr(5, 2);
+      const year = d.substr(0, 4);
+
+      this.setState({ birthdateData: { day, month, year } });
+    }
+  }
 
   mapToViewModel(athlete) {
     return {
@@ -155,10 +255,10 @@ class PersonalInfo extends Form {
       birthday: athlete[0].birthday ? athlete[0].birthday : "",
       enrollment_year: athlete[0].enrollment_year
         ? athlete[0].enrollment_year
-        : "",
+        : "0",
       enrollment_month: athlete[0].enrollment_month
         ? athlete[0].enrollment_month
-        : "",
+        : "0",
       medical_information: athlete[0].medical_information
         ? athlete[0].medical_information
         : "",
@@ -181,9 +281,15 @@ class PersonalInfo extends Form {
     }
 
     const { data } = { ...this.state };
-    data.birthday = data.birthday
-      ? new Date(this.state.birthday).toJSON().substr(0, 10)
-      : "";
+
+    const validDate = await this.validateBirthdate();
+
+    if (!validDate) {
+      toast.error("La fecha de nacimiento no es valida.");
+      return false;
+    } else {
+      if (data.birthday === "") delete data.birthday;
+    }
 
     data.photo = data.id === 0 ? "" : data.photo;
 
@@ -193,11 +299,8 @@ class PersonalInfo extends Form {
       data.photo = sessionStorage["newPhoto"];
       data.photo_filename = sessionStorage["newPhoto_filename"];
     }
-
-    console.log("Athlete: Before:", data);
-
+    console.log("data", data);
     const { data: athlete } = await saveAthlete(data);
-    console.log("Athlete: After:", athlete);
 
     //Remove old photo from firebase
     if (old_photo)
@@ -216,8 +319,17 @@ class PersonalInfo extends Form {
     sessionStorage["newPhoto"] = "";
     sessionStorage["newPhoto_filename"] = "";
 
-    //window.location = `/athlete/${athlete.id}`;
-    //this.props.history.push(`/athlete/${athlete.id}`);
+    toast.success("Los cambios fueron guardados!");
+
+    if (this.props.match.params.id === "new")
+      window.location = `/athlete/${athlete.id}`;
+  };
+
+  handleChangeBirthdate = ({ currentTarget: input }) => {
+    const { birthdateData } = { ...this.state };
+
+    birthdateData[input.name] = input.value;
+    this.setState({ birthdateData });
   };
 
   render() {
@@ -260,13 +372,43 @@ class PersonalInfo extends Form {
                   this.state.enrollmentMonths
                 )}
               </div>
-              <div className="col-6">
-                <label className="d-block">Fecha de Nacimiento</label>
-                <DatePicker
+              <div className="col-5">
+                <label>Fecha de Nacimiento</label>
+                <div className="row">
+                  <div className="col-3">
+                    <Select
+                      name="day"
+                      value={this.state.birthdateData.day}
+                      options={this.state.birthdateDays}
+                      onChange={this.handleChangeBirthdate}
+                      label=""
+                      error={null}
+                    />
+                  </div>
+                  <div className="">
+                    <Select
+                      name="month"
+                      value={this.state.birthdateData.month}
+                      options={this.state.birthdateMonths}
+                      onChange={this.handleChangeBirthdate}
+                      error={null}
+                    />
+                  </div>
+                  <div className="col-3">
+                    <Select
+                      name="year"
+                      value={this.state.birthdateData.year}
+                      options={this.state.birthdateYears}
+                      onChange={this.handleChangeBirthdate}
+                      error={null}
+                    />
+                  </div>
+                </div>
+                {/* <DatePicker
                   selected={this.state.birthday}
                   onChange={(date) => this.handleChangeBirthday(date)}
                   dateFormat="dd/MM/yyyy"
-                />
+                /> */}
               </div>
             </div>
 

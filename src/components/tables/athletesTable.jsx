@@ -10,8 +10,7 @@ class AthletesTable extends Component {
       path: "photo",
       label: "Foto",
       content: (athlete) => (
-        // <Link to={`/athlete/${athlete.id}`}>
-        <a href={`/athlete/${athlete.id}`}>
+        <Link to={`/athlete/${athlete.id}`}>
           <div className="text-center">
             <div
               className="border rounded-circle d-inline-block"
@@ -24,8 +23,7 @@ class AthletesTable extends Component {
               }}
             ></div>
           </div>
-        </a>
-        // </Link>
+        </Link>
       ),
     },
     {
