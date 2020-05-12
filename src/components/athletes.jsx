@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import Pagination from "./common/pagination";
+import Pagination from "react-js-pagination";
 import SearchBox from "./common/searchBox";
 import NewButton from "./common/newButton";
 import Loading from "./common/loading";
@@ -18,7 +18,7 @@ class Athletes extends Component {
     currentPage: 1,
     pageSize: 10,
     searchQuery: "",
-    sortColumn: { path: "creationDate", order: "desc" }
+    sortColumn: { path: "creationDate", order: "desc" },
   };
 
   async componentDidMount() {
@@ -27,13 +27,13 @@ class Athletes extends Component {
     this.setState({ athletes, loading: false });
   }
 
-  handleDelete = async athlete => {
+  handleDelete = async (athlete) => {
     const answer = window.confirm(
       `Esta seguro de eliminar al atleta ${athlete.first_name} ${athlete.last_name}? \nNo podrá deshacer esta acción`
     );
     if (answer) {
       const originalAthletes = this.state.athletes;
-      const athletes = this.state.athletes.filter(m => m.id !== athlete.id);
+      const athletes = this.state.athletes.filter((m) => m.id !== athlete.id);
       this.setState({ athletes });
 
       try {
@@ -49,7 +49,7 @@ class Athletes extends Component {
             .then(() => {
               console.log(`file ${athlete.photo_filename} deleted`);
             })
-            .catch(error => {
+            .catch((error) => {
               console.log(error);
             });
       } catch (ex) {
@@ -61,15 +61,15 @@ class Athletes extends Component {
     }
   };
 
-  handlePageChange = page => {
+  handlePageChange = (page) => {
     this.setState({ currentPage: page });
   };
 
-  handleSearch = query => {
+  handleSearch = (query) => {
     this.setState({ searchQuery: query, currentPage: 1 });
   };
 
-  handleSort = sortColumn => {
+  handleSort = (sortColumn) => {
     this.setState({ sortColumn });
   };
 
@@ -79,12 +79,12 @@ class Athletes extends Component {
       currentPage,
       sortColumn,
       searchQuery,
-      athletes: allAthletes
+      athletes: allAthletes,
     } = this.state;
 
     let filtered = allAthletes;
     if (searchQuery)
-      filtered = allAthletes.filter(m =>
+      filtered = allAthletes.filter((m) =>
         `${m.first_name.toLowerCase()} ${m.last_name.toLowerCase()}`.includes(
           searchQuery.toLocaleLowerCase()
         )
@@ -138,11 +138,20 @@ class Athletes extends Component {
 
             {!this.state.loading && athletes.length > 0 && (
               <div className="row">
-                <Pagination
+                {/* <Pagination
                   itemsCount={totalCount}
                   pageSize={pageSize}
                   currentPage={currentPage}
                   onPageChange={this.handlePageChange}
+                /> */}
+                <Pagination
+                  activePage={currentPage}
+                  itemsCountPerPage={pageSize}
+                  totalItemsCount={totalCount}
+                  pageRangeDisplayed={5}
+                  onChange={this.handlePageChange.bind(this)}
+                  itemClass="page-item"
+                  linkClass="page-link"
                 />
                 <p className="text-muted ml-3 mt-2">
                   <em>

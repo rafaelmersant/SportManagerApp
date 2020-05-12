@@ -28,6 +28,7 @@ class PersonalInfo extends Form {
       enrollment_year: "0", //new Date().getFullYear(),
       enrollment_month: "0", //new Date().getMonth() + 1,
       medical_information: "",
+      category: "0",
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
     },
@@ -53,6 +54,11 @@ class PersonalInfo extends Form {
       "Noviembre",
       "Diciembre",
     ],
+    categories: [
+      { id: "0", name: "Seleccionar..." },
+      { id: "Normal", name: "Normal" },
+      { id: "Master", name: "Master" },
+    ],
   };
 
   schema = {
@@ -68,6 +74,7 @@ class PersonalInfo extends Form {
     enrollment_year: Joi.optional(),
     enrollment_month: Joi.optional(),
     medical_information: Joi.optional(),
+    category: Joi.optional(),
     created_user: Joi.string(),
     creation_date: Joi.string(),
   };
@@ -163,15 +170,12 @@ class PersonalInfo extends Form {
   validateBirthdate = async () => {
     const { birthdateData, data } = { ...this.state };
     let birthdate = this.state.data.birthday;
-    console.log("birthdate", birthdate);
-    console.log("birthdateData", birthdateData);
+
     if (
       birthdateData.day !== "0" &&
       birthdateData.month !== "0" &&
       birthdateData.year !== "0"
     ) {
-      console.log("birthdateData", birthdateData);
-
       birthdate = [
         birthdateData.year,
         birthdateData.month,
@@ -184,7 +188,6 @@ class PersonalInfo extends Form {
 
       if (date instanceof Date && isFinite(date)) {
         data.birthday = birthdate;
-        console.log("data", data);
         this.setState({ data });
 
         return true;
@@ -262,6 +265,7 @@ class PersonalInfo extends Form {
       medical_information: athlete[0].medical_information
         ? athlete[0].medical_information
         : "",
+      category: athlete[0].category ? athlete[0].category : "0",
       created_user: athlete[0].created_user
         ? athlete[0].created_user
         : getCurrentUser().email,
@@ -404,17 +408,18 @@ class PersonalInfo extends Form {
                     />
                   </div>
                 </div>
-                {/* <DatePicker
-                  selected={this.state.birthday}
-                  onChange={(date) => this.handleChangeBirthday(date)}
-                  dateFormat="dd/MM/yyyy"
-                /> */}
               </div>
             </div>
 
             {this.renderInput("address", "Dirección", "text", "", "Opcional")}
             {this.renderInput("medical_information", "Información médica")}
-
+            <div>
+              {this.renderSelect(
+                "category",
+                "Categoria",
+                this.state.categories
+              )}
+            </div>
             <div className="text-center mt-2">
               {this.renderButton("Guardar")}
             </div>
