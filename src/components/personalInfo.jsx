@@ -376,10 +376,10 @@ class PersonalInfo extends Form {
                   this.state.enrollmentMonths
                 )}
               </div>
-              <div className="col-5">
+              <div className="col-lg-6 col-md-6 col-sm-12">
                 <label>Fecha de Nacimiento</label>
                 <div className="row">
-                  <div className="col-3">
+                  <div className="col-lg-3 col-md-3 col-sm-4">
                     <Select
                       name="day"
                       value={this.state.birthdateData.day}
@@ -389,7 +389,7 @@ class PersonalInfo extends Form {
                       error={null}
                     />
                   </div>
-                  <div className="">
+                  <div className="col-lg-5 col-md-5 col-sm-4">
                     <Select
                       name="month"
                       value={this.state.birthdateData.month}
@@ -398,7 +398,7 @@ class PersonalInfo extends Form {
                       error={null}
                     />
                   </div>
-                  <div className="col-3">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
                     <Select
                       name="year"
                       value={this.state.birthdateData.year}
@@ -411,14 +411,16 @@ class PersonalInfo extends Form {
               </div>
             </div>
 
-            {this.renderInput("address", "Dirección", "text", "", "Opcional")}
+            {/* {this.renderInput("address", "Dirección", "text", "", "Opcional")} */}
             {this.renderInput("medical_information", "Información médica")}
-            <div>
-              {this.renderSelect(
-                "category",
-                "Categoria",
-                this.state.categories
-              )}
+            <div className="row">
+              <div className="col-lg-12 col-md-12 col-sm-12">
+                {this.renderSelect(
+                  "category",
+                  "Categoria",
+                  this.state.categories
+                )}
+              </div>
             </div>
             <div className="text-center mt-2">
               {this.renderButton("Guardar")}
