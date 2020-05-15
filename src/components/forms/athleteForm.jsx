@@ -9,11 +9,11 @@ class AthleteForm extends Component {
   state = {
     data: {
       photo: "",
-      filename: ""
-    }
+      filename: "",
+    },
   };
 
-  handleChangePhoto = photo => {
+  handleChangePhoto = (photo) => {
     if (photo.changed) {
       sessionStorage["newPhoto"] = photo.url;
       sessionStorage["newPhoto_filename"] = photo.filename;
@@ -28,7 +28,7 @@ class AthleteForm extends Component {
 
   render() {
     return (
-      <div className="container col-lg-8 col-md-12 col-sm-12 shadow pb-1 bg-white">
+      <div className="container col-xl-8 col-lg-9 col-md-12 col-sm-12 shadow pb-1 bg-white">
         <div className="text-center mb-2 pt-1">
           <div className="text-center">
             <PhotoProfile

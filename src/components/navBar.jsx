@@ -34,10 +34,16 @@ const NavBar = ({ user }) => {
         <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
           {user && (
             <li className="nav-item">
-              <a href="/athletes/" className="nav-link">
-                {user.role !== "Level2" && <span>Atletas</span>}
-                {user.role === "Level2" && <span>Mi Perfil</span>}
-              </a>
+              {user.role !== "Level2" && (
+                <a href="/athletes/" className="nav-link">
+                  Atletas
+                </a>
+              )}
+              {user.role === "Level2" && (
+                <a href={`/athlete/${user.athleteId}`} className="nav-link">
+                  Mi Perfil
+                </a>
+              )}
             </li>
           )}
 

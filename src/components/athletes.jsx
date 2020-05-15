@@ -12,7 +12,6 @@ import {
 import AthletesTable from "./tables/athletesTable";
 import firebase from "firebase/app";
 import "firebase/storage";
-import { getCurrentUser } from "../services/authService";
 
 class Athletes extends Component {
   state = {
@@ -24,11 +23,6 @@ class Athletes extends Component {
     searchQuery: "",
     sortColumn: { path: "creationDate", order: "desc" },
   };
-
-  componentWillMount() {
-    const user = getCurrentUser();
-    if (user.role === "Level2") window.location = `/athlete/${user.athleteId}`;
-  }
 
   async componentDidMount() {
     await this.populateAthletes(
