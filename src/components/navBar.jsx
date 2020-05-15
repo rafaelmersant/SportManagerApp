@@ -70,7 +70,10 @@ const NavBar = ({ user }) => {
             <React.Fragment>
               <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li className="nav-item">
-                  <NavLink className="nav-link mr-sm-2 active" to="/profile">
+                  <NavLink
+                    className="nav-link mr-sm-2 active"
+                    to={`/user/${user.id}`}
+                  >
                     {user.name}
                   </NavLink>
                 </li>

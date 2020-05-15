@@ -1,30 +1,65 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import _ from "lodash";
 import Pagination from "react-js-pagination";
 import SearchBox from "./common/searchBox";
 import NewButton from "./common/newButton";
 import Loading from "./common/loading";
-import { paginate } from "../utils/paginate";
-import { getAthletes, deleteAthlete } from "../services/athleteService";
+import {
+  getAthletes,
+  deleteAthlete,
+  getAthletesByName,
+} from "../services/athleteService";
 import AthletesTable from "./tables/athletesTable";
 import firebase from "firebase/app";
 import "firebase/storage";
+import { getCurrentUser } from "../services/authService";
 
 class Athletes extends Component {
   state = {
     loading: true,
     athletes: [],
+    totalAthletes: 0,
     currentPage: 1,
     pageSize: 10,
     searchQuery: "",
     sortColumn: { path: "creationDate", order: "desc" },
   };
 
-  async componentDidMount() {
-    const { data: athletes } = await getAthletes();
+  componentWillMount() {
+    if (getCurrentUser().role === "Level2") window.location = `/athlete/${953}`;
+  }
 
-    this.setState({ athletes, loading: false });
+  async componentDidMount() {
+    await this.populateAthletes(
+      "",
+      this.state.currentPage,
+      this.state.sortColumn
+    );
+  }
+
+  async populateAthletes(query, page, sortColumn) {
+    let athletes = [];
+    const name = query.toUpperCase().split(" ").join("%20");
+
+    try {
+      if (name === "") {
+        const { data: prods } = await getAthletes(page, sortColumn);
+        athletes = prods;
+      } else {
+        const { data: prods } = await getAthletesByName(name, page, sortColumn);
+        athletes = prods;
+      }
+
+      this.setState({
+        athletes: athletes.results,
+        totalAthletes: athletes.count,
+        loading: false,
+      });
+
+      this.forceUpdate();
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 
   handleDelete = async (athlete) => {
@@ -32,10 +67,6 @@ class Athletes extends Component {
       `Esta seguro de eliminar al atleta ${athlete.first_name} ${athlete.last_name}? \nNo podrá deshacer esta acción`
     );
     if (answer) {
-      const originalAthletes = this.state.athletes;
-      const athletes = this.state.athletes.filter((m) => m.id !== athlete.id);
-      this.setState({ athletes });
-
       try {
         await deleteAthlete(athlete.id);
 
@@ -52,56 +83,57 @@ class Athletes extends Component {
             .catch((error) => {
               console.log(error);
             });
+
+        await this.populateAthletes(
+          "",
+          this.state.currentPage,
+          this.state.sortColumn
+        );
       } catch (ex) {
         if (ex.response && ex.response.status === 404)
           toast.error("Este atleta ya fue eliminado");
-
-        this.setState({ athletes: originalAthletes });
       }
     }
   };
 
-  handlePageChange = (page) => {
+  handlePageChange = async (page) => {
     this.setState({ currentPage: page });
+
+    if (this.state.searchQuery)
+      await this.populateAthletes(this.state.searchQuery, parseInt(page));
+    else await this.populateAthletes("", parseInt(page));
   };
 
-  handleSearch = (query) => {
+  handleSearch = async (query) => {
     this.setState({ searchQuery: query, currentPage: 1 });
+
+    await this.populateAthletes(
+      query,
+      this.state.currentPage,
+      this.state.sortColumn
+    );
   };
 
-  handleSort = (sortColumn) => {
+  handleSort = async (sortColumn) => {
     this.setState({ sortColumn });
+
+    await this.populateAthletes(
+      this.state.searchQuery,
+      this.state.currentPage,
+      sortColumn
+    );
   };
 
-  getPagedData = () => {
+  render() {
     const {
       pageSize,
       currentPage,
       sortColumn,
       searchQuery,
-      athletes: allAthletes,
+      totalAthletes,
+      athletes,
     } = this.state;
-
-    let filtered = allAthletes;
-    if (searchQuery)
-      filtered = allAthletes.filter((m) =>
-        `${m.first_name.toLowerCase()} ${m.last_name.toLowerCase()}`.includes(
-          searchQuery.toLocaleLowerCase()
-        )
-      );
-
-    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
-    const athletes = paginate(sorted, currentPage, pageSize);
-
-    return { totalCount: filtered.length, athletes };
-  };
-
-  render() {
-    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { user } = this.props;
-
-    const { totalCount, athletes } = this.getPagedData();
 
     return (
       <div className="container">
@@ -138,16 +170,10 @@ class Athletes extends Component {
 
             {!this.state.loading && athletes.length > 0 && (
               <div className="row">
-                {/* <Pagination
-                  itemsCount={totalCount}
-                  pageSize={pageSize}
-                  currentPage={currentPage}
-                  onPageChange={this.handlePageChange}
-                /> */}
                 <Pagination
                   activePage={currentPage}
                   itemsCountPerPage={pageSize}
-                  totalItemsCount={totalCount}
+                  totalItemsCount={totalAthletes}
                   pageRangeDisplayed={5}
                   onChange={this.handlePageChange.bind(this)}
                   itemClass="page-item"
@@ -155,7 +181,7 @@ class Athletes extends Component {
                 />
                 <p className="text-muted ml-3 mt-2">
                   <em>
-                    Mostrando {athletes.length} de {totalCount} atletas
+                    Mostrando {athletes.length} de {totalAthletes} atletas
                   </em>
                 </p>
               </div>

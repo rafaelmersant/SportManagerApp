@@ -85,9 +85,10 @@ class PersonalInfo extends Form {
       if (athleteId === "new") return;
 
       const { data: athlete } = await getAthlete(athleteId);
-      const mappedAthlete = this.mapToViewModel(athlete);
+      const mappedAthlete = this.mapToViewModel(athlete.results);
 
-      if (athlete[0].birthday) this.mapToBirthdate(mappedAthlete.birthday);
+      if (athlete.results[0].birthday)
+        this.mapToBirthdate(mappedAthlete.birthday);
 
       this.setState({
         data: mappedAthlete,

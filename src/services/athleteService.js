@@ -18,8 +18,16 @@ function documentUrl(id) {
 
 // Athletes
 //************************************************************//
-export function getAthletes() {
-  return http.get(`${apiEndpoint}/`);
+export function getAthletes(currentPage, sortColumn) {
+  const order = sortColumn && sortColumn.order === "desc" ? "-" : "";
+  const column =
+    sortColumn && sortColumn.path ? sortColumn.path : "creationDate";
+  const page = currentPage ? currentPage : 1;
+
+  if (currentPage)
+    return http.get(`${apiEndpoint}/?ordering=${order}${column}&page=${page}`);
+
+  return http.get(`${apiEndpoint}/?ordering=${order}${column}`);
 }
 
 export function getAthletesByName(searchText) {

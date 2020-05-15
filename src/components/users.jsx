@@ -7,6 +7,7 @@ import NewButton from "./common/newButton";
 import { paginate } from "../utils/paginate";
 import { getUsers, deleteUser } from "../services/userService";
 import UsersTable from "./tables/usersTable";
+import { getCurrentUser } from "../services/authService";
 
 class Users extends Component {
   state = {
@@ -14,22 +15,23 @@ class Users extends Component {
     currentPage: 1,
     pageSize: 10,
     searchQuery: "",
-    sortColumn: { path: "name", order: "asc" }
+    sortColumn: { path: "name", order: "asc" },
   };
 
   async componentDidMount() {
-    const { data: users } = await getUsers();
+    if (getCurrentUser().role === "Level2") window.location = "/";
 
+    const { data: users } = await getUsers();
     this.setState({ users });
   }
 
-  handleDelete = async user => {
+  handleDelete = async (user) => {
     const answer = window.confirm(
       "Esta seguro de eliminar este usuario? \nNo podrá deshacer esta acción"
     );
     if (answer) {
       const originalUsers = this.state.users;
-      const users = this.state.users.filter(m => m.id !== user.id);
+      const users = this.state.users.filter((m) => m.id !== user.id);
       this.setState({ users });
 
       try {
@@ -43,15 +45,15 @@ class Users extends Component {
     }
   };
 
-  handlePageChange = page => {
+  handlePageChange = (page) => {
     this.setState({ currentPage: page });
   };
 
-  handleSearch = query => {
+  handleSearch = (query) => {
     this.setState({ searchQuery: query, currentPage: 1 });
   };
 
-  handleSort = sortColumn => {
+  handleSort = (sortColumn) => {
     this.setState({ sortColumn });
   };
 
@@ -61,12 +63,12 @@ class Users extends Component {
       currentPage,
       sortColumn,
       searchQuery,
-      users: allUsers
+      users: allUsers,
     } = this.state;
 
     let filtered = allUsers;
     if (searchQuery)
-      filtered = allUsers.filter(m =>
+      filtered = allUsers.filter((m) =>
         m.name.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
       );
 

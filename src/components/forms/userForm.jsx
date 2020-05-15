@@ -15,39 +15,28 @@ class UserForm extends Form {
       user_role: "",
       user_hash: "hash",
       created_user: getCurrentUser().email,
-      creation_date: new Date().toISOString()
+      creation_date: new Date().toISOString(),
     },
     roles: [
       { id: "Admin", name: "Admin" },
       { id: "Level1", name: "Level1" },
       { id: "Level2", name: "Level2" },
-      { id: "Reportes", name: "Reportes" }
+      { id: "Reportes", name: "Reportes" },
     ],
     errors: {},
-    action: "Nuevo Usuario"
+    action: "Nuevo Usuario",
+    disabled: "",
   };
 
   schema = {
     id: Joi.number(),
-    email: Joi.string()
-      .required()
-      .email()
-      .label("Email"),
-    password: Joi.string()
-      .required()
-      .min(8)
-      .max(30)
-      .label("Password"),
-    name: Joi.string()
-      .required()
-      .min(5)
-      .label("Nombre"),
-    user_role: Joi.string()
-      .required()
-      .label("Rol"),
+    email: Joi.string().required().email().label("Email"),
+    password: Joi.string().required().min(8).max(30).label("Password"),
+    name: Joi.string().required().min(5).label("Nombre"),
+    user_role: Joi.string().required().label("Rol"),
     user_hash: Joi.string().optional(),
     created_user: Joi.string(),
-    creation_date: Joi.string()
+    creation_date: Joi.string(),
   };
 
   async populateUser() {
@@ -59,7 +48,7 @@ class UserForm extends Form {
 
       this.setState({
         data: this.mapToViewModel(user),
-        action: "Editar Usuario"
+        action: "Editar Usuario",
       });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
@@ -69,6 +58,21 @@ class UserForm extends Form {
 
   async componentDidMount() {
     await this.populateUser();
+
+    this.limitedUser();
+  }
+
+  limitedUser() {
+    let disabled = "";
+    let action = this.state.action;
+    const role = getCurrentUser().role;
+
+    if (role === "Level2") {
+      disabled = "disabled";
+      action = "Cambiar Contraseña";
+    }
+
+    this.setState({ disabled, action });
   }
 
   mapToViewModel(user) {
@@ -82,7 +86,7 @@ class UserForm extends Form {
       created_user: user[0].created_user
         ? user[0].created_user
         : getCurrentUser().email,
-      creation_date: user[0].creation_date
+      creation_date: user[0].creation_date,
     };
   }
 
@@ -99,21 +103,34 @@ class UserForm extends Form {
 
     await saveUser(this.state.data);
 
-    this.props.history.push("/users");
+    if (this.state.disabled === "") this.props.history.push("/users");
+
+    toast.success("La contraseña fue cambiada");
   };
 
   render() {
+    let classes = "";
+    if (this.state.disabled === "")
+      classes = "container col-5 ml-3 shadow p-3 mb-5 bg-white rounded";
+    else
+      classes =
+        "container col-lg-4 col-md-6 col-sm-11 shadow p-3 mb-5 bg-white rounded";
+
     return (
-      <div className="container pull-left col-5 ml-3 shadow p-3 mb-5 bg-white rounded">
+      <div className={classes}>
         <h2 className="bg-fenix-blue text-fenix-yellow pl-2 pr-2 pt-1 pb-1">
           {this.state.action}
         </h2>
         <div className="col-12 pb-3 bg-light">
           <form onSubmit={this.handleSubmit}>
-            {this.renderInput("email", "Email")}
+            {this.renderInput("email", "Email", "text", this.state.disabled)}
             {this.renderInput("password", "Contraseña", "password")}
-            {this.renderInput("name", "Nombre")}
-            {this.renderSelect("user_role", "Rol", this.state.roles)}
+            {this.renderInput("name", "Nombre", "text", this.state.disabled)}
+            {this.state.disabled !== "disabled" && (
+              <span>
+                {this.renderSelect("user_role", "Rol", this.state.roles)}
+              </span>
+            )}
             {this.renderButton("Guardar")}
           </form>
         </div>
