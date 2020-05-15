@@ -338,6 +338,8 @@ class PersonalInfo extends Form {
   };
 
   render() {
+    const disabled = getCurrentUser().role === "Level2" ? "disabled" : "";
+
     return (
       <React.Fragment>
         <h4 className="text-fenix-yellow bg-fenix-blue pl-1 pr-1 pt-1 pb-1">
@@ -419,7 +421,8 @@ class PersonalInfo extends Form {
                 {this.renderSelect(
                   "category",
                   "Categoria",
-                  this.state.categories
+                  this.state.categories,
+                  disabled
                 )}
               </div>
             </div>

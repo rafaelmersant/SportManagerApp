@@ -7,6 +7,7 @@ const token = {
   email: "ms_email",
   name: "ms_name",
   role: "ms_role",
+  athleteId: "ms_athleteId",
 };
 
 //http.setJwt(getJwt());
@@ -18,6 +19,7 @@ export async function login(credentials) {
   sessionStorage.setItem(token.email, jwt.email);
   sessionStorage.setItem(token.name, jwt.name);
   sessionStorage.setItem(token.role, jwt.role);
+  sessionStorage.setItem(token.athleteId, jwt.athlete_id);
 }
 
 export function logout() {
@@ -25,6 +27,7 @@ export function logout() {
   sessionStorage.removeItem(token.email);
   sessionStorage.removeItem(token.name);
   sessionStorage.removeItem(token.role);
+  sessionStorage.removeItem(token.athleteId);
 }
 
 export function getCurrentUser() {
@@ -36,6 +39,7 @@ export function getCurrentUser() {
       name: sessionStorage.getItem(token.name),
       email: sessionStorage.getItem(token.email),
       role: sessionStorage.getItem(token.role),
+      athleteId: sessionStorage.getItem(token.athleteId),
     };
 
     //jwtDecode(jwt);

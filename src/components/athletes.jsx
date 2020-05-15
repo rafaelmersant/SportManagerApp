@@ -26,7 +26,8 @@ class Athletes extends Component {
   };
 
   componentWillMount() {
-    if (getCurrentUser().role === "Level2") window.location = `/athlete/${953}`;
+    const user = getCurrentUser();
+    if (user.role === "Level2") window.location = `/athlete/${user.athleteId}`;
   }
 
   async componentDidMount() {

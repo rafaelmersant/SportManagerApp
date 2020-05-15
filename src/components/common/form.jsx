@@ -6,7 +6,7 @@ import Select from "./select";
 class Form extends Component {
   state = {
     data: {},
-    erros: {}
+    erros: {},
   };
 
   validate = () => {
@@ -28,7 +28,7 @@ class Form extends Component {
     return error ? error.details[0].message : null;
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
 
     const errors = this.validate();
@@ -62,7 +62,7 @@ class Form extends Component {
     );
   }
 
-  renderSelect(name, label, options) {
+  renderSelect(name, label, options, disabled = "") {
     const { data, errors } = this.state;
 
     return (
@@ -73,6 +73,7 @@ class Form extends Component {
         options={options}
         onChange={this.handleChange}
         error={errors[name]}
+        disabled={disabled}
       />
     );
   }

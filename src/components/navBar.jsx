@@ -35,7 +35,8 @@ const NavBar = ({ user }) => {
           {user && (
             <li className="nav-item">
               <a href="/athletes/" className="nav-link">
-                Atletas
+                {user.role !== "Level2" && <span>Atletas</span>}
+                {user.role === "Level2" && <span>Mi Perfil</span>}
               </a>
             </li>
           )}

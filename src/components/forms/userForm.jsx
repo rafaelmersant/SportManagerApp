@@ -14,6 +14,7 @@ class UserForm extends Form {
       name: "",
       user_role: "",
       user_hash: "hash",
+      athlete_id: 0,
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
     },
@@ -30,11 +31,12 @@ class UserForm extends Form {
 
   schema = {
     id: Joi.number(),
-    email: Joi.string().required().email().label("Email"),
-    password: Joi.string().required().min(8).max(30).label("Password"),
+    email: Joi.string().required().label("Email / Usuario"),
+    password: Joi.string().required().min(4).max(30).label("Contraseña"),
     name: Joi.string().required().min(5).label("Nombre"),
     user_role: Joi.string().required().label("Rol"),
     user_hash: Joi.string().optional(),
+    athlete_id: Joi.optional(),
     created_user: Joi.string(),
     creation_date: Joi.string(),
   };
@@ -83,6 +85,7 @@ class UserForm extends Form {
       name: user[0].name,
       user_role: user[0].user_role,
       user_hash: user[0].user_hash ? user[0].user_hash : "hash",
+      athlete_id: user[0].athlete_id ? user[0].athlete_id : 0,
       created_user: user[0].created_user
         ? user[0].created_user
         : getCurrentUser().email,
@@ -104,8 +107,7 @@ class UserForm extends Form {
     await saveUser(this.state.data);
 
     if (this.state.disabled === "") this.props.history.push("/users");
-
-    toast.success("La contraseña fue cambiada");
+    else toast.success("La contraseña fue cambiada");
   };
 
   render() {
@@ -123,12 +125,23 @@ class UserForm extends Form {
         </h2>
         <div className="col-12 pb-3 bg-light">
           <form onSubmit={this.handleSubmit}>
-            {this.renderInput("email", "Email", "text", this.state.disabled)}
+            {this.renderInput(
+              "email",
+              "Email / Usuario",
+              "text",
+              this.state.disabled
+            )}
             {this.renderInput("password", "Contraseña", "password")}
             {this.renderInput("name", "Nombre", "text", this.state.disabled)}
             {this.state.disabled !== "disabled" && (
               <span>
                 {this.renderSelect("user_role", "Rol", this.state.roles)}
+                {this.renderInput(
+                  "athlete_id",
+                  "Atleta Id",
+                  "text",
+                  this.state.disabled
+                )}
               </span>
             )}
             {this.renderButton("Guardar")}

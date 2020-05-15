@@ -8,16 +8,12 @@ import { toast } from "react-toastify";
 class LoginForm extends Form {
   state = {
     data: { email: "", password: "" },
-    errors: {}
+    errors: {},
   };
 
   schema = {
-    email: Joi.string()
-      .required()
-      .label("Email"),
-    password: Joi.string()
-      .required()
-      .label("Contraseña")
+    email: Joi.string().required().label("Email / Usuario"),
+    password: Joi.string().required().label("Contraseña"),
   };
 
   doSubmit = async () => {
@@ -49,7 +45,7 @@ class LoginForm extends Form {
         </h2>
         <div className="col-12 pb-3 bg-light">
           <form onSubmit={this.handleSubmit}>
-            {this.renderInput("email", "Email")}
+            {this.renderInput("email", "Email / Usuario")}
             {this.renderInput("password", "Contraseña", "password")}
 
             {this.renderButton("Login")}
