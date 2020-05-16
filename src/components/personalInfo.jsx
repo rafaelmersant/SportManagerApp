@@ -160,7 +160,7 @@ class PersonalInfo extends Form {
     years.push({ id: 0, name: "Año" });
 
     let startYear = new Date().getFullYear() - 5;
-    let endYear = new Date().getFullYear() - 40;
+    let endYear = new Date().getFullYear() - 55;
 
     for (let i = startYear; i >= endYear; i--) {
       years.push({ id: i, name: i });
