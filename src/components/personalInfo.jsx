@@ -31,6 +31,7 @@ class PersonalInfo extends Form {
       category: "0",
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
+      edited_date: null,
     },
     errors: {},
     action: "Nuevo Atleta",
@@ -303,6 +304,7 @@ class PersonalInfo extends Form {
     }
 
     data.photo = data.id === 0 ? "" : data.photo;
+    data.edited_date = new Date().toISOString();
 
     if (sessionStorage["newPhoto"]) {
       var { photo_filename: old_photo } = { ...this.state.data };

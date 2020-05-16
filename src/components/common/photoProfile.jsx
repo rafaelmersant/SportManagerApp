@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { defaultPhoto } from "../../variables";
+import { toast } from "react-toastify";
 import FileUploader from "react-firebase-file-uploader";
 import firebase from "firebase/app";
 import "firebase/storage";
@@ -9,28 +10,28 @@ class PhotoProfile extends Component {
     avatar: "",
     photo: "",
     progress: 0,
-    isUploading: false
+    isUploading: false,
   };
 
-  handleChangePhoto = event => {
+  handleChangePhoto = (event) => {
     const file = event.target.files[0];
 
     this.setState({
       selectedPhoto: file,
-      photo: URL.createObjectURL(event.target.files[0])
+      photo: URL.createObjectURL(event.target.files[0]),
     });
   };
 
   handleUploadStart = () => this.setState({ isUploading: true });
 
-  handleProgress = progress => this.setState({ progress });
+  handleProgress = (progress) => this.setState({ progress });
 
-  handleUploadError = error => {
+  handleUploadError = (error) => {
     this.setState({ isUploading: false });
     console.error(error);
   };
 
-  handleUploadSuccess = filename => {
+  handleUploadSuccess = (filename) => {
     this.setState({ avatar: filename, progress: 100, isUploading: false });
 
     firebase
@@ -38,10 +39,12 @@ class PhotoProfile extends Component {
       .ref("photos")
       .child(filename)
       .getDownloadURL()
-      .then(url => {
+      .then((url) => {
         this.setState({ photo: url });
         this.props.onChangePhoto({ url, filename, changed: true });
       });
+
+    toast.success("Debe darle al boton GUARDAR para conservar la nueva foto.");
   };
 
   render() {
@@ -60,7 +63,7 @@ class PhotoProfile extends Component {
               width: "170px",
               height: "170px",
               backgroundImage: "url(" + photo + ")",
-              backgroundSize: "cover"
+              backgroundSize: "cover",
               // transform: "rotate(90deg)"
             }}
           ></div>
