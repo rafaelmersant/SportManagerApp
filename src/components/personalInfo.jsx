@@ -96,8 +96,8 @@ class PersonalInfo extends Form {
       });
 
       this.props.onChangePhoto({
-        url: athlete[0].photo,
-        filename: athlete[0].photo_filename,
+        url: athlete.results[0].photo,
+        filename: athlete.results[0].photo_filename,
       });
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
