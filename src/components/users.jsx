@@ -22,7 +22,7 @@ class Users extends Component {
     if (getCurrentUser().role === "Level2") window.location = "/";
 
     const { data: users } = await getUsers();
-    this.setState({ users });
+    this.setState({ users: users.results });
   }
 
   handleDelete = async (user) => {
