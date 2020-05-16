@@ -211,7 +211,7 @@ class PersonalInfo extends Form {
       getCurrentUser().role === "Level2" &&
       this.props.match.params.id !== getCurrentUser().athleteId
     )
-      window.location = `/athlete/${athlete.id}`;
+      window.location = `/athlete/${getCurrentUser().athleteId}`;
 
     this.populateEnrollmentYears();
     this.populateEnrollmentMonths();
