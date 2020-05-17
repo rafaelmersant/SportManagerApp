@@ -108,6 +108,7 @@ class UserForm extends Form {
       return false;
     }
 
+    console.log(this.state.data);
     await saveUser(this.state.data);
 
     if (this.state.disabled === "") this.props.history.push("/users");

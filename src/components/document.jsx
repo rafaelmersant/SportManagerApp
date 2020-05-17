@@ -181,7 +181,7 @@ class Document extends Form {
 
     return (
       <React.Fragment>
-        <div className="container col-lg-6 col-xl-6 col-md-6 col-sm-12">
+        <div className="container col-lg-6 col-xl-6 col-md-7 col-sm-12">
           <h4 className="text-center text-info font-weight-bold mt-3">
             Material de Estudio para Francés
           </h4>
@@ -251,7 +251,7 @@ class Document extends Form {
         </div>
 
         <div>
-          <div className="container col-lg-6 col-xl-6 col-md-6 col-sm-12 mt-4">
+          <div className="container col-lg-7 col-xl-7 col-md-7 col-sm-12 mt-4">
             <div className="col">
               {documents.length > 0 && (
                 <div style={{ minHeight: "370px" }}>

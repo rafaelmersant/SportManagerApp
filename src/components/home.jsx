@@ -13,7 +13,7 @@ const Home = () => {
           alt="FENIX"
         />
       </div>
-      <div className="text-center mt-3">
+      <div className="text-center mt-3 mb-2">
         {user && (
           <a
             href={`/frances`}
