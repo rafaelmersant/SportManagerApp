@@ -2,6 +2,8 @@ import React from "react";
 import { getCurrentUser } from "../services/authService";
 
 const Home = () => {
+  const user = getCurrentUser();
+
   return (
     <React.Fragment>
       <div className="text-center">
@@ -12,20 +14,24 @@ const Home = () => {
         />
       </div>
       <div className="text-center mt-3">
-        <a
-          href={`/frances`}
-          className="btn btn-danger pl-5 pr-5 pb-2 pt-2 mr-2"
-          style={{ backgroundColor: "#ee00aa" }}
-        >
-          Francés
-        </a>
+        {user && (
+          <a
+            href={`/frances`}
+            className="btn btn-danger pl-5 pr-5 pb-2 pt-2 mr-2"
+            style={{ backgroundColor: "#ee00aa" }}
+          >
+            Francés
+          </a>
+        )}
 
-        <a
-          href={`/athlete/${getCurrentUser().athleteId}`}
-          className="btn btn-info pl-5 pr-5 pb-2 pt-2 ml-2"
-        >
-          Mi Perfil
-        </a>
+        {user && user.athleteId && (
+          <a
+            href={`/athlete/${user.athleteId}`}
+            className="btn btn-info pl-5 pr-5 pb-2 pt-2 ml-2"
+          >
+            Mi Perfil
+          </a>
+        )}
       </div>
     </React.Fragment>
   );

@@ -32,7 +32,7 @@ export function saveUser(user) {
   if (user.id) {
     const body = { ...user };
     delete body.id;
-    return http.put(); //http.put(userUrl(user.id), body);
+    return http.put(userUrl(user.id), body);
   }
 
   return http.post(`${apiEndpoint}/`, user);
