@@ -1,7 +1,11 @@
 import React from "react";
 import Joi from "joi-browser";
 import Form from "../common/form";
-import { getUser, saveUser, getEmailExists } from "../../services/userService";
+import {
+  saveUser,
+  getEmailExists,
+  getUserInfo,
+} from "../../services/userService";
 import { getCurrentUser } from "../../services/authService";
 import { toast } from "react-toastify";
 
@@ -46,7 +50,7 @@ class UserForm extends Form {
       const userId = this.props.match.params.id;
       if (userId === "new") return;
 
-      const { data: user } = await getUser(userId);
+      const { data: user } = await getUserInfo(userId);
 
       this.setState({
         data: this.mapToViewModel(user),
@@ -79,17 +83,17 @@ class UserForm extends Form {
 
   mapToViewModel(user) {
     return {
-      id: user[0].id,
-      email: user[0].email,
-      password: user[0].password,
-      name: user[0].name,
-      user_role: user[0].user_role,
-      user_hash: user[0].user_hash ? user[0].user_hash : "hash",
-      athlete_id: user[0].athlete_id ? user[0].athlete_id : 0,
-      created_user: user[0].created_user
-        ? user[0].created_user
+      id: user.id,
+      email: user.email,
+      password: user.password ? user.password : "",
+      name: user.name,
+      user_role: user.user_role,
+      user_hash: user.user_hash ? user.user_hash : "hash",
+      athlete_id: user.athlete_id ? user.athlete_id : 0,
+      created_user: user.created_user
+        ? user.created_user
         : getCurrentUser().email,
-      creation_date: user[0].creation_date,
+      creation_date: user.creation_date,
     };
   }
 

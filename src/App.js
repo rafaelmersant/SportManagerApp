@@ -12,6 +12,7 @@ import Users from "./components/users";
 import UserForm from "./components/forms/userForm";
 import ProtectedRoute from "./components/common/protectedRoute";
 import auth from "./services/authService";
+import Document from "./components/document";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Home from "./components/home";
@@ -22,7 +23,7 @@ firebase.initializeApp(firebaseConfig);
 
 class App extends Component {
   state = {
-    user: {}
+    user: {},
   };
 
   componentDidMount() {
@@ -51,6 +52,7 @@ class App extends Component {
             <ProtectedRoute path="/athlete/:id" component={AthleteForm} />
             <ProtectedRoute path="/users" component={Users} />
             <ProtectedRoute path="/user/:id" component={UserForm} />
+            <ProtectedRoute path="/frances" component={Document} />
             <Route exact path="/" component={Home} />
             <Route path="/not-found" component={NotFound} />
             <Redirect to="/not-found" />
