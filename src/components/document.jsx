@@ -26,6 +26,10 @@ class Document extends Form {
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
     },
+    categories: [
+      { id: "DOC", name: "Documento" },
+      { id: "LINK", name: "Link" },
+    ],
     documents: [],
     errors: {},
     documentName: "",
@@ -178,29 +182,42 @@ class Document extends Form {
       ...this.state,
     };
     const user = getCurrentUser();
+    const docDisable = this.state.data.category === "LINK" ? "" : "disabled";
 
     return (
       <React.Fragment>
-        <div className="container col-lg-6 col-xl-6 col-md-7 col-sm-12">
+        <div className="container col-lg-8 col-xl-8 col-md-8 col-sm-12">
           <h4 className="text-center text-info font-weight-bold mt-3">
             Material de Estudio para Francés
           </h4>
 
           {user && user.role === "Admin" && (
-            <div className="col-12 pb-3 mb-3">
+            <div className="col-12 mb-3">
               <form onSubmit={this.handleSubmit}>
-                <div className="row">
-                  <div className="col-lg-6 col-md-6 col-sm-12">
-                    {this.renderInput(
-                      "description",
-                      "",
-                      "text",
-                      "",
-                      "Titulo del documento"
+                <div className="row bg-fenix-yellow mt-3 pt-2 border rounded-top">
+                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                    {this.renderSelect(
+                      "category",
+                      "Tipo",
+                      this.state.categories
                     )}
                   </div>
-
-                  <div className="col-lg-3 col-md-3 col-sm-12">
+                  <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                    {this.renderInput(
+                      "description",
+                      "Titulo del documento",
+                      "text"
+                    )}
+                  </div>
+                  <div className="col-11">
+                    {this.renderInput(
+                      "doc_url",
+                      "Documento / Video",
+                      "text",
+                      docDisable
+                    )}
+                  </div>
+                  <div className="col-lg-1 col-md-1 col-sm-1">
                     {isUploading && (
                       <div className="progress" style={{ marginTop: "38px" }}>
                         <div
@@ -216,7 +233,15 @@ class Document extends Form {
                       </div>
                     )}
                     {!isUploading && (
-                      <label style={{ marginTop: "35px" }}>
+                      <label
+                        className="fa fa-folder text-fenix-blue"
+                        style={{
+                          fontSize: "2em",
+                          marginTop: "1.1em",
+                          cursor: "pointer",
+                          title: "Buscar archivo",
+                        }}
+                      >
                         <FileUploader
                           hidden
                           accept="*"
@@ -228,21 +253,19 @@ class Document extends Form {
                           onUploadSuccess={this.handleUploadSuccess}
                           onProgress={this.handleProgress}
                         />
-                        <h6 className="text-info" style={{ cursor: "pointer" }}>
-                          {this.state.data.document_url && (
+                        {/* <h6 className="text-info" style={{ cursor: "pointer" }}>
+                          {this.state.data.doc_url && (
                             <span className="fa fa-file text-warning"></span>
-                          )}{" "}
-                          Cargar documento
-                        </h6>
+                          )}
+                        </h6> */}
                       </label>
                     )}
                   </div>
-
-                  <div
-                    className="col-lg-3 col-md-3 col-sm-12"
-                    style={{ marginTop: "25px" }}
-                  >
-                    {this.renderButton("Guardar")}
+                  <div className="mb-3 ml-3">
+                    {this.renderButton(
+                      "Guardar",
+                      "bg-fenix-blue text-fenix-yellow"
+                    )}
                   </div>
                 </div>
               </form>
@@ -251,8 +274,8 @@ class Document extends Form {
         </div>
 
         <div>
-          <div className="container col-lg-7 col-xl-7 col-md-7 col-sm-12 mt-4">
-            <div className="col">
+          <div className="container col-lg-8 col-xl-8 col-md-8 col-sm-12 mt-4">
+            <div>
               {documents.length > 0 && (
                 <div style={{ minHeight: "370px" }}>
                   <DocumentsGeneralTable

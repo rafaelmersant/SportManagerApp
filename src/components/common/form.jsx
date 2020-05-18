@@ -51,12 +51,9 @@ class Form extends Component {
     this.setState({ data, errors });
   };
 
-  renderButton(label) {
+  renderButton(label, color = "bg-fenix-yellow text-fenix-blue") {
     return (
-      <button
-        disabled={this.validate()}
-        className="btn bg-fenix-yellow pl-5 pr-5"
-      >
+      <button disabled={this.validate()} className={`btn pl-5 pr-5 ${color}`}>
         {label}
       </button>
     );
