@@ -19,6 +19,7 @@ class ParentInfo extends Form {
       name: "",
       phone_number: "",
       email: "",
+      career: "",
       created_user: getCurrentUser().email,
       creation_date: new Date().toISOString(),
     },
@@ -32,6 +33,7 @@ class ParentInfo extends Form {
     name: Joi.string().required().max(150).label("Nombre"),
     phone_number: Joi.optional(),
     email: Joi.optional(),
+    career: Joi.optional(),
     created_user: Joi.string(),
     creation_date: Joi.string(),
   };
@@ -62,6 +64,7 @@ class ParentInfo extends Form {
       name: parent[0].name,
       phone_number: parent[0].phone_number ? parent[0].phone_number : "",
       email: parent[0].email ? parent[0].email : "",
+      career: parent[0].career ? parent[0].career : "",
       created_user: parent[0].created_user
         ? parent[0].created_user
         : getCurrentUser().email,
@@ -108,6 +111,7 @@ class ParentInfo extends Form {
         name: item[0].name,
         phone_number: item[0].phone_number,
         email: item[0].email,
+        career: item[0].career,
         created_user: getCurrentUser().email,
         creation_date: new Date().toISOString(),
       };
@@ -126,6 +130,7 @@ class ParentInfo extends Form {
       data.name = "";
       data.phone_number = "";
       data.email = "";
+      data.career = "";
 
       this.setState({ data });
 
@@ -154,10 +159,13 @@ class ParentInfo extends Form {
                 <div className="col-lg-4 col-md-4 col-sm-12">
                   {this.renderInput("name", "Nombre")}
                 </div>
-                <div className="col-lg-4 col-md-4 col-sm-12">
+                <div className="col-lg-3 col-md-3 col-sm-12">
+                  {this.renderInput("career", "Profesión")}
+                </div>
+                <div className="col-lg-2 col-md-2 col-sm-12">
                   {this.renderInput("phone_number", "Teléfonos")}
                 </div>
-                <div className="col-lg-4 col-md-4 col-sm-12">
+                <div className="col-lg-3 col-md-3 col-sm-12">
                   {this.renderInput("email", "Email")}
                 </div>
               </div>

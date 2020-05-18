@@ -5,15 +5,16 @@ import auth from "../../services/authService";
 class ParentsTable extends Component {
   columns = [
     { path: "name", label: "Nombre" },
+    { path: "career", label: "Profesión" },
     { path: "phone_number", label: "Teléfono" },
-    { path: "email", label: "Email" }
+    { path: "email", label: "Email" },
   ];
 
   actionColumn = {
     path: "action",
     key: "action",
     classes: "text-center",
-    content: parent => (
+    content: (parent) => (
       <div>
         <div className="d-inline-block mr-1">
           <span
@@ -30,7 +31,7 @@ class ParentsTable extends Component {
           ></span>
         </div>
       </div>
-    )
+    ),
   };
 
   constructor() {
