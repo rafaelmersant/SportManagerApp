@@ -1,6 +1,6 @@
 import React from "react";
 
-const TabsAthlete = props => {
+const TabsAthlete = (props) => {
   return (
     <ul className="nav nav-tabs" id="myTab" role="tablist">
       <li className="nav-item">
@@ -27,7 +27,7 @@ const TabsAthlete = props => {
             aria-controls="parent"
             aria-selected="false"
           >
-            Relacionados
+            Padres/tutores
           </a>
         </li>
       )}
