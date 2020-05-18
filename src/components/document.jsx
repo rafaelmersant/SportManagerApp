@@ -186,7 +186,7 @@ class Document extends Form {
 
     return (
       <React.Fragment>
-        <div className="container col-lg-8 col-xl-8 col-md-8 col-sm-12">
+        <div className="container col-lg-7 col-xl-7 col-md-7 col-sm-12">
           <h4 className="text-center text-info font-weight-bold mt-3">
             Material de Estudio para Francés
           </h4>
@@ -217,50 +217,52 @@ class Document extends Form {
                       docDisable
                     )}
                   </div>
-                  <div className="col-lg-1 col-md-1 col-sm-1">
-                    {isUploading && (
-                      <div className="progress" style={{ marginTop: "38px" }}>
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: `${progress}%` }}
-                          aria-valuenow={progress}
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        >
-                          {progress}%
+                  {docDisable === "disabled" && (
+                    <div className="col-1">
+                      {isUploading && (
+                        <div className="progress" style={{ marginTop: "38px" }}>
+                          <div
+                            className="progress-bar"
+                            role="progressbar"
+                            style={{ width: `${progress}%` }}
+                            aria-valuenow={progress}
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          >
+                            {progress}%
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    {!isUploading && (
-                      <label
-                        className="fa fa-folder text-fenix-blue"
-                        style={{
-                          fontSize: "2em",
-                          marginTop: "1.1em",
-                          cursor: "pointer",
-                          title: "Buscar archivo",
-                        }}
-                      >
-                        <FileUploader
-                          hidden
-                          accept="*"
-                          name="frances"
-                          randomizeFilename
-                          storageRef={firebase.storage().ref("frances")}
-                          onUploadStart={this.handleUploadStart}
-                          onUploadError={this.handleUploadError}
-                          onUploadSuccess={this.handleUploadSuccess}
-                          onProgress={this.handleProgress}
-                        />
-                        {/* <h6 className="text-info" style={{ cursor: "pointer" }}>
+                      )}
+                      {!isUploading && (
+                        <label
+                          className="fa fa-folder text-fenix-blue"
+                          style={{
+                            fontSize: "2em",
+                            marginTop: "1.1em",
+                            cursor: "pointer",
+                            title: "Buscar archivo",
+                          }}
+                        >
+                          <FileUploader
+                            hidden
+                            accept="*"
+                            name="frances"
+                            randomizeFilename
+                            storageRef={firebase.storage().ref("frances")}
+                            onUploadStart={this.handleUploadStart}
+                            onUploadError={this.handleUploadError}
+                            onUploadSuccess={this.handleUploadSuccess}
+                            onProgress={this.handleProgress}
+                          />
+                          {/* <h6 className="text-info" style={{ cursor: "pointer" }}>
                           {this.state.data.doc_url && (
                             <span className="fa fa-file text-warning"></span>
                           )}
                         </h6> */}
-                      </label>
-                    )}
-                  </div>
+                        </label>
+                      )}
+                    </div>
+                  )}
                   <div className="mb-3 ml-3">
                     {this.renderButton(
                       "Guardar",
@@ -274,7 +276,7 @@ class Document extends Form {
         </div>
 
         <div>
-          <div className="container col-lg-8 col-xl-8 col-md-8 col-sm-12 mt-4">
+          <div className="container col-lg-7 col-xl-7 col-md-7 col-sm-12 mt-4">
             <div>
               {documents.length > 0 && (
                 <div style={{ minHeight: "370px" }}>
