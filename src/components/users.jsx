@@ -1,28 +1,51 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import _ from "lodash";
-import Pagination from "./common/pagination";
+import Pagination from "react-js-pagination";
 import SearchBox from "./common/searchBox";
 import NewButton from "./common/newButton";
-import { paginate } from "../utils/paginate";
-import { getUsers, deleteUser } from "../services/userService";
+import { getUsers, getUsersByName, deleteUser } from "../services/userService";
 import UsersTable from "./tables/usersTable";
 import { getCurrentUser } from "../services/authService";
 
 class Users extends Component {
   state = {
     users: [],
+    totalUsers: 0,
     currentPage: 1,
     pageSize: 10,
     searchQuery: "",
-    sortColumn: { path: "name", order: "asc" },
+    sortColumn: { path: "creation_date", order: "asc" },
   };
 
   async componentDidMount() {
     if (getCurrentUser().role === "Level2") window.location = "/";
 
-    const { data: users } = await getUsers();
-    this.setState({ users: users.results });
+    await this.populateUsers("", this.state.currentPage, this.state.sortColumn);
+  }
+
+  async populateUsers(query, page, sortColumn) {
+    let users = [];
+    const name = query.toUpperCase().split(" ").join("%20");
+
+    try {
+      if (name === "") {
+        const { data: _users } = await getUsers(page, sortColumn);
+        users = _users;
+      } else {
+        const { data: _users } = await getUsersByName(name, page, sortColumn);
+        users = _users;
+      }
+
+      this.setState({
+        users: users.results,
+        totalUsers: users.count,
+        loading: false,
+      });
+
+      this.forceUpdate();
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 
   handleDelete = async (user) => {
@@ -45,45 +68,44 @@ class Users extends Component {
     }
   };
 
-  handlePageChange = (page) => {
+  handlePageChange = async (page) => {
     this.setState({ currentPage: page });
+
+    if (this.state.searchQuery)
+      await this.populateUsers(this.state.searchQuery, parseInt(page));
+    else await this.populateUsers("", parseInt(page));
   };
 
-  handleSearch = (query) => {
+  handleSearch = async (query) => {
     this.setState({ searchQuery: query, currentPage: 1 });
+
+    await this.populateUsers(
+      query,
+      this.state.currentPage,
+      this.state.sortColumn
+    );
   };
 
-  handleSort = (sortColumn) => {
+  handleSort = async (sortColumn) => {
     this.setState({ sortColumn });
+
+    await this.populateUsers(
+      this.state.searchQuery,
+      this.state.currentPage,
+      sortColumn
+    );
   };
 
-  getPagedData = () => {
+  render() {
     const {
       pageSize,
       currentPage,
       sortColumn,
       searchQuery,
-      users: allUsers,
+      totalUsers,
+      users,
     } = this.state;
-
-    let filtered = allUsers;
-    if (searchQuery)
-      filtered = allUsers.filter((m) =>
-        m.name.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
-      );
-
-    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
-    const users = paginate(sorted, currentPage, pageSize);
-
-    return { totalCount: filtered.length, users };
-  };
-
-  render() {
-    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { user } = this.props;
-
-    const { totalCount, users } = this.getPagedData();
 
     return (
       <div className="container">
@@ -106,17 +128,24 @@ class Users extends Component {
               onSort={this.handleSort}
             />
 
-            <div className="row">
-              <Pagination
-                itemsCount={totalCount}
-                pageSize={pageSize}
-                currentPage={currentPage}
-                onPageChange={this.handlePageChange}
-              />
-              <p className="text-muted ml-3 mt-2">
-                <em>Mostrando {totalCount} usuarios</em>
-              </p>
-            </div>
+            {!this.state.loading && users.length > 0 && (
+              <div className="row">
+                <Pagination
+                  activePage={currentPage}
+                  itemsCountPerPage={pageSize}
+                  totalItemsCount={totalUsers}
+                  pageRangeDisplayed={5}
+                  onChange={this.handlePageChange.bind(this)}
+                  itemClass="page-item"
+                  linkClass="page-link"
+                />
+                <p className="text-muted ml-3 mt-2">
+                  <em>
+                    Mostrando {users.length} de {totalUsers} usuarios
+                  </em>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

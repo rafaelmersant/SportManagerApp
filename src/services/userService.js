@@ -6,7 +6,21 @@ function userUrl(id) {
   return `${apiEndpoint}/${id}`;
 }
 
-export function getUsers() {
+export function getUsers(currentPage, sortColumn) {
+  const order = sortColumn && sortColumn.order === "desc" ? "-" : "";
+  const column =
+    sortColumn && sortColumn.path ? sortColumn.path : "creationDate";
+  const page = currentPage ? currentPage : 1;
+
+  if (currentPage)
+    return http.get(`${apiEndpoint}/?ordering=${order}${column}&page=${page}`);
+
+  return http.get(`${apiEndpoint}/?ordering=${order}${column}`);
+}
+
+export function getUsersByName(searchText) {
+  if (searchText) return http.get(`${apiEndpoint}/?search=${searchText}`);
+
   return http.get(`${apiEndpoint}/`);
 }
 

@@ -38,11 +38,15 @@ class Athletes extends Component {
 
     try {
       if (name === "") {
-        const { data: prods } = await getAthletes(page, sortColumn);
-        athletes = prods;
+        const { data: _athletes } = await getAthletes(page, sortColumn);
+        athletes = _athletes;
       } else {
-        const { data: prods } = await getAthletesByName(name, page, sortColumn);
-        athletes = prods;
+        const { data: _athletes } = await getAthletesByName(
+          name,
+          page,
+          sortColumn
+        );
+        athletes = _athletes;
       }
 
       this.setState({

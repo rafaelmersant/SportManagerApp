@@ -24,7 +24,7 @@ const Home = () => {
           </a>
         )}
 
-        {user && user.athleteId && (
+        {user && user.athleteId > 0 && (
           <a
             href={`/athlete/${user.athleteId}`}
             className="btn btn-info pl-5 pr-5 pb-2 pt-2 ml-2"

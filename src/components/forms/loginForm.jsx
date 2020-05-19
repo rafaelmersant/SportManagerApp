@@ -39,8 +39,8 @@ class LoginForm extends Form {
     if (auth.getCurrentUser()) return <Redirect to="/" />;
 
     return (
-      <div className="container col-lg-4 col-md-6 col-sm-11 shadow p-3 mb-5 bg-white rounded">
-        <h2 className="bg-fenix-blue text-light pl-2 pr-2 pt-1 pb-1">
+      <div className="container col-xl-4 col-lg-5 col-md-5 col-sm-8 shadow p-3 mb-5 bg-white rounded">
+        <h2 className="bg-fenix-blue text-light pl-2 pr-2 pt-1 pb-1 border rounded">
           Entrar al Sistema
         </h2>
         <div className="col-12 pb-3 bg-light">
@@ -48,7 +48,7 @@ class LoginForm extends Form {
             {this.renderInput("email", "Email / Usuario")}
             {this.renderInput("password", "Contraseña", "password")}
 
-            {this.renderButton("Login")}
+            <div className="text-center">{this.renderButton("Entrar")}</div>
           </form>
         </div>
       </div>

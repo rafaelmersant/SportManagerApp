@@ -3,7 +3,10 @@ import { NavLink } from "react-router-dom";
 
 const NavBar = ({ user }) => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light  shadow">
+    <nav
+      className="navbar navbar-expand-lg navbar-light shadow-sm"
+      style={{ padding: ".1rem .1rem" }}
+    >
       <NavLink className="navbar-brand" to="/">
         <img
           width="60px"
