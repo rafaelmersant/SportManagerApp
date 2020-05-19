@@ -12,7 +12,7 @@ class Users extends Component {
     users: [],
     totalUsers: 0,
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 20,
     searchQuery: "",
     sortColumn: { path: "creation_date", order: "asc" },
   };
