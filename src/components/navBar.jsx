@@ -50,6 +50,14 @@ const NavBar = ({ user }) => {
             </li>
           )}
 
+          {user && (
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/birthdates">
+                Cumpleaños
+              </NavLink>
+            </li>
+          )}
+
           {user &&
             user.role === "Admin" &&
             user.email === "rafaelmersant@yahoo.com" && (

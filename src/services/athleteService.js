@@ -60,6 +60,9 @@ export function deleteAthlete(athleteId) {
   return http.delete(athleteUrl(athleteId));
 }
 
+export function getAthletesBirthdate(month) {
+  return http.get(`/athletes-birthdate/?month=${month}`);
+}
 //Parents
 //************************************************************//
 export function getParents(athleteId) {
